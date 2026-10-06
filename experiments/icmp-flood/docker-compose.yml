@@ -1,0 +1,49 @@
+# Docker Compose configuration for ICMP Flood Demonstration (P3)
+# Cybersecurity Virtual Lab
+#
+# Usage:
+#   docker compose up --build
+#   docker compose down
+
+services:
+  target:
+    build:
+      context: .
+      dockerfile: target/Dockerfile
+    image: icmp-flood-target:latest
+    container_name: icmp-target
+    hostname: icmp-target
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    environment:
+      # Set ENABLE_MITIGATION=true to demonstrate ICMP flood rate limiting
+      - ENABLE_MITIGATION=${ENABLE_MITIGATION:-false}
+      - ICMP_RATE_LIMIT=${ICMP_RATE_LIMIT:-5/s}
+      - ICMP_RATE_BURST=${ICMP_RATE_BURST:-5}
+    networks:
+      - icmp-lab
+
+  attacker:
+    build:
+      context: .
+      dockerfile: attacker/Dockerfile
+    image: icmp-flood-attacker:latest
+    container_name: icmp-attacker
+    hostname: icmp-attacker
+    depends_on:
+      - target
+    environment:
+      - TARGET=icmp-target
+      - PACKETS=100
+      - INTERVAL=0.05
+      - MAX_RUNTIME=10
+    networks:
+      - icmp-lab
+
+networks:
+  icmp-lab:
+    name: icmp-lab
+    driver: bridge
+    # internal: true isolates this network from external networks and the host WAN
+    internal: true
