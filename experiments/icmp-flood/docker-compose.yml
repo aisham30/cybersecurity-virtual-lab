@@ -1,0 +1,25 @@
+services:
+  target:
+    build:
+      context: ./target
+    mem_limit: 128m
+    cpus: 0.50
+    networks:
+      - lab-network
+
+  simulator:
+    build:
+      context: ./simulator
+    mem_limit: 128m
+    cpus: 0.50
+    cap_add:
+      - NET_RAW
+    profiles:
+      - attack
+    networks:
+      - lab-network
+
+networks:
+  lab-network:
+    driver: bridge
+    internal: true

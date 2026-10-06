@@ -1,0 +1,48 @@
+id: ICMP-FLOOD-01
+name: ICMP Flood Attack
+version: "1.0"
+
+mode: NETWORK_LAB
+
+description: >
+  A controlled local cybersecurity experiment demonstrating
+  the observable effects of bounded ICMP traffic against
+  an isolated Docker target.
+
+services:
+  - name: target
+    type: target
+    required: true
+
+  - name: simulator
+    type: simulator
+    profile: attack
+    required: false
+
+network:
+  isolated: true
+  name: lab-network
+  external_access: false
+
+limits:
+  target:
+    memory: 128m
+    cpu: "0.50"
+
+  simulator:
+    memory: 128m
+    cpu: "0.50"
+
+experiment:
+  target: target
+  packet_count: 20
+  interval_seconds: 0.2
+  destination_locked: true
+
+lifecycle:
+  start: docker compose up -d
+  attack: docker compose --profile attack run --rm simulator
+  stop: docker compose stop
+  reset: docker compose down -v
+  status: docker compose ps
+  logs: docker compose logs
