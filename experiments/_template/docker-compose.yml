@@ -1,0 +1,11 @@
+services:
+  target:
+    image: nginx:alpine
+    container_name: vlab-expxx-target
+    ports:
+      - "127.0.0.1:3000:80"
+
+  attacker:
+    image: alpine:3.19
+    container_name: vlab-expxx-attacker
+    command: tail -f /dev/null

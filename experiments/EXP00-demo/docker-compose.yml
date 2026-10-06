@@ -1,0 +1,22 @@
+services:
+  target:
+    image: node:18-alpine
+    container_name: vlab-exp00-target
+    working_dir: /app
+    volumes:
+      - ./target:/app:ro
+    command: node /app/server.js
+    ports:
+      - "127.0.0.1:3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://127.0.0.1:3000/api/status || exit 1"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 2s
+
+  attacker:
+    image: alpine:3.19
+    container_name: vlab-exp00-attacker
+    command: sh -c "apk add --no-cache curl bind-tools netcat-openbsd bash 2>/dev/null || true; tail -f /dev/null"
+    restart: unless-stopped

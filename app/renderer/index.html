@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICMP Flood — Live Demonstration</title>
+
+  <!-- Google Fonts & Styles -->
+  <link rel="stylesheet" href="../../node_modules/@fontsource/inter/400.css">
+  <link rel="stylesheet" href="../../node_modules/@fontsource/inter/700.css">
+  <link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/400.css">
+  <link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/700.css">
+  <link rel="stylesheet" href="../../node_modules/@xterm/xterm/css/xterm.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- External Libraries -->
+  <script src="../../node_modules/@xterm/xterm/lib/xterm.js"></script>
+  <script src="../../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+</head>
+<body>
+  <div id="app-root">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="logo-badge">⚡ VLAB</div>
+        <div class="brand-text">
+          <h1 class="app-title">ICMP Flood — Live Demonstration</h1>
+          <span class="app-subtitle">Internal Docker Network Isolated Attack Simulation</span>
+        </div>
+      </div>
+
+      <div class="header-status">
+        <div id="lab-status-pill" class="status-pill stopped">
+          <span class="dot"></span>
+          <span id="lab-status-text">Stopped</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Controls Toolbar -->
+    <div class="controls-toolbar">
+      <div class="lab-btn-group">
+        <button id="btn-start-lab" class="btn btn-success">
+          ▶ Start Lab
+        </button>
+        <button id="btn-stop-lab" class="btn btn-danger" disabled>
+          ■ Stop Lab
+        </button>
+        <button id="btn-reset-lab" class="btn btn-warning" disabled>
+          ↺ Reset Lab
+        </button>
+      </div>
+
+      <div class="attack-btn-group">
+        <button id="btn-launch-flood" class="btn btn-attack" disabled>
+          ⚡ Launch Flood (15s)
+        </button>
+
+        <label class="toggle-switch-card">
+          <input type="checkbox" id="toggle-mitigation" disabled>
+          <span class="toggle-slider"></span>
+          <span class="toggle-label">🛡️ Apply Mitigation (iptables rate-limit)</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Main Live Workspace -->
+    <main class="app-main">
+      <!-- Top Grid: Server Health Load Gauge & Key Metric Cards -->
+      <div class="health-metrics-row">
+        <!-- Target Server Health Load Gauge -->
+        <div class="card health-gauge-card">
+          <div class="card-header">
+            <h3>Target Server Load Status</h3>
+            <span id="target-health-badge" class="health-badge healthy">HEALTHY</span>
+          </div>
+          <div class="gauge-bar-container">
+            <div id="health-gauge-bar" class="gauge-bar" style="width: 5%;"></div>
+          </div>
+          <div class="gauge-info">
+            <span id="gauge-status-desc">Target CPU and packet intake operating within normal parameters.</span>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stat-card">
+          <span class="stat-label">Target CPU Usage</span>
+          <div id="stat-cpu-val" class="stat-value">0%</div>
+          <span class="stat-sub">Limit: 30% CPU Core</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">ICMP Packets / sec</span>
+          <div id="stat-pps-val" class="stat-value">0 PPS</div>
+          <span class="stat-sub">Echo-Requests / second</span>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-label">RAM Memory</span>
+          <div id="stat-mem-val" class="stat-value">0 MB</div>
+          <span class="stat-sub">Limit: 128 MB</span>
+        </div>
+      </div>
+
+      <!-- Real-Time Telemetry Charts Section (Centerpiece) -->
+      <div class="card charts-card">
+        <div class="card-header">
+          <h3>📊 Real-Time Telemetry & Event Annotations</h3>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-box cpu"></span> Target CPU %</span>
+            <span class="legend-item"><span class="legend-box pps"></span> ICMP Packets/sec</span>
+            <span class="legend-item"><span class="legend-box flood"></span> ⚡ Flood Event</span>
+            <span class="legend-item"><span class="legend-box mitigation"></span> 🛡️ Mitigation Event</span>
+          </div>
+        </div>
+
+        <div class="charts-container">
+          <!-- Chart 1: CPU % Canvas -->
+          <div class="chart-wrapper">
+            <div class="chart-title">Target Container CPU Utilization (%)</div>
+            <canvas id="chart-cpu-canvas" width="1200" height="150"></canvas>
+          </div>
+
+          <!-- Chart 2: ICMP Packets / sec Canvas -->
+          <div class="chart-wrapper" style="margin-top: 1rem;">
+            <div class="chart-title">ICMP Echo-Requests Received per Second (PPS)</div>
+            <canvas id="chart-pps-canvas" width="1200" height="150"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Split: Embedded Attacker Terminal & Activity Log Stream -->
+      <div class="bottom-split-row">
+        <!-- Collapsible Terminal Panel -->
+        <div class="card terminal-card">
+          <div class="card-header term-header" id="term-header-toggle">
+            <div class="term-title">
+              <span>💻 Attacker Terminal (`docker exec -i icmp-attacker sh`)</span>
+              <span id="term-status-badge" class="term-badge">Not Connected</span>
+            </div>
+            <div class="term-actions">
+              <button id="btn-term-interrupt" class="btn btn-xs btn-secondary" title="Send Ctrl+C">Ctrl+C</button>
+            </div>
+          </div>
+          <div id="terminal-container" class="xterm-container"></div>
+        </div>
+
+        <!-- Activity Log Stream -->
+        <div class="card log-card">
+          <div class="card-header">
+            <h3>📜 Activity Log</h3>
+            <button id="btn-export-log" class="btn btn-xs btn-secondary">Export Log .txt</button>
+          </div>
+          <div id="log-stream" class="log-stream-box">
+            <div class="log-entry info">[System] ICMP Flood Demonstration ready. Click "Start Lab" to begin.</div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

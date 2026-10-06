@@ -1,0 +1,35 @@
+services:
+  target:
+    build: ./docker/target
+    container_name: icmp-target
+    hostname: target
+    networks:
+      - icmp-net
+    cap_add:
+      - NET_ADMIN
+    mem_limit: 128m
+    cpus: 0.3
+    labels:
+      com.vlab.managed: "true"
+      com.vlab.lab: "icmp-flood"
+
+  attacker:
+    build: ./docker/attacker
+    container_name: icmp-attacker
+    hostname: attacker
+    networks:
+      - icmp-net
+    cap_add:
+      - NET_RAW
+    mem_limit: 128m
+    cpus: 0.3
+    labels:
+      com.vlab.managed: "true"
+      com.vlab.lab: "icmp-flood"
+
+networks:
+  icmp-net:
+    internal: true
+    labels:
+      com.vlab.managed: "true"
+      com.vlab.lab: "icmp-flood"

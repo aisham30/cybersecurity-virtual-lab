@@ -1,0 +1,37 @@
+id: EXP00-demo
+name: Web Security & Reconnaissance Demo Lab
+mode: CONTAINER
+compose: docker-compose.yml
+network: isolated
+limits:
+  memory: 512m
+  cpu: 1
+targetUrl: http://localhost:3000
+terminalService: attacker
+metrics:
+  type: docker
+  requestsService: target
+content:
+  readme: README.md
+  guidance: Guidance.md
+  theory: content/theory.md
+  quiz: assets/quiz.json
+aim: Demonstrate end-to-end virtual lab execution, container isolation, target interaction, embedded terminal commands, real-time metrics monitoring, and quiz evaluation.
+objectives:
+  - Launch the isolated container environment cleanly with CPU/RAM resource bounds
+  - Inspect and interact with the vulnerable HTTP target web server running on port 3000
+  - Use the attacker container terminal to perform HTTP requests (curl) and network probing
+  - Observe real-time container telemetry and stress metrics in the dashboard
+  - Verify automated cleanup upon stopping the lab session
+tags:
+  - Demo
+  - Web Security
+  - Reconnaissance
+  - Environment Test
+difficulty: Beginner
+duration: 15 mins
+references:
+  - title: OWASP Foundation Security Resources
+    url: https://owasp.org
+  - title: RFC 2616 Hypertext Transfer Protocol -- HTTP/1.1
+    url: https://datatracker.ietf.org/doc/html/rfc2616
