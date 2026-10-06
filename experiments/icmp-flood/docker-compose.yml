@@ -6,6 +6,12 @@ services:
     cpus: 0.50
     networks:
       - lab-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; os.kill(1, 0)"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+      start_period: 3s
 
   simulator:
     build:
