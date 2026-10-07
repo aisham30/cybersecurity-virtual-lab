@@ -1,0 +1,42 @@
+{
+  "title": "EXP00 Web Security & Lab Architecture Quiz",
+  "passScore": 66,
+  "questions": [
+    {
+      "id": "q1",
+      "question": "Why are Docker CPU and Memory resource limits (cgroups) enforced on lab containers?",
+      "options": [
+        "To speed up internet download rates inside the container",
+        "To prevent a runaway or malicious lab process from consuming all host system resources",
+        "To disable container networking completely",
+        "To allow containers to run without Docker installed"
+      ],
+      "answer": 1,
+      "explanation": "Control groups (cgroups) enforce limits on memory, CPU usage, and max process IDs so an experiment cannot crash or lock up the student's host machine."
+    },
+    {
+      "id": "q2",
+      "question": "Which command allows performing a command-line HTTP request from the attacker container to the target web server?",
+      "options": [
+        "ping -c 4 127.0.0.1",
+        "curl -i http://target:3000/api/status",
+        "docker run target:3000",
+        "nmap --script-all localhost"
+      ],
+      "answer": 1,
+      "explanation": "`curl -i http://target:3000/api/status` issues an HTTP GET request to the internal DNS alias `target` on port 3000 and displays response headers."
+    },
+    {
+      "id": "q3",
+      "question": "What happens when the student clicks 'Stop Lab' in the VLab interface?",
+      "options": [
+        "The containers are paused in background memory indefinitely",
+        "All lab containers, temporary bridge networks, and volumes are safely removed to return to a clean state",
+        "The host operating system reboots",
+        "The experiment source files are deleted from disk"
+      ],
+      "answer": 1,
+      "explanation": "Stopping a lab triggers `docker compose down -v --remove-orphans` and label-based cleanup, purging containers, temporary networks, and volumes for a clean state."
+    }
+  ]
+}

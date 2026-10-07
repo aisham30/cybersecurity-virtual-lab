@@ -1,0 +1,32 @@
+id: EXPXX-template
+name: Sample Security Experiment Title
+mode: CONTAINER            # SIMULATION | CONTAINER | NETWORK_LAB
+compose: docker-compose.yml
+network: isolated          # isolated | internal
+limits:
+  memory: 512m
+  cpu: 1
+  pids: 256
+targetUrl: http://localhost:3000   # optional (must bind to 127.0.0.1)
+terminalService: attacker          # container name in docker-compose.yml to attach terminal
+metrics:
+  type: docker                     # docker | simulated
+  requestsService: target          # optional service name to count HTTP logs
+content:
+  readme: README.md
+  guidance: Guidance.md
+  theory: content/theory.md
+  quiz: assets/quiz.json
+aim: Brief 1-2 sentence description of the lab objective.
+objectives:
+  - Objective 1
+  - Objective 2
+  - Objective 3
+tags:
+  - Topic
+  - Security
+difficulty: Intermediate
+duration: 30 mins
+references:
+  - title: Reference Guide Title
+    url: https://example.com/reference
