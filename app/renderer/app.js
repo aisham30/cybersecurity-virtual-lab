@@ -1212,15 +1212,6 @@ function renderMitigationDetail(methodKey) {
         <button type="button" class="btn-copy-code" onclick="copyDefenseCode('${codeEscaped}', this)">📋 COPY</button>
         <code>${item.code.replace(/\n/g, '<br>')}</code>
       </div>
-      <div style="margin-top: 0.5rem; font-size: 0.76rem; color: var(--neo-text-dim);">
-        <strong style="color: var(--neo-text);">Option Breakdown:</strong>
-        <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
-          ${item.codeFlags.map(f => `<li style="margin-bottom: 2px;">${f}</li>`).join('')}
-        </ul>
-      </div>
-      <div style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--neo-text-dim); font-family: var(--font-mono);">
-        🔒 <em>Executed bounded inside isolated sandbox container. Never runs on host machine.</em>
-      </div>
     </div>
 
     <!-- 5. Strengths & Limitations -->

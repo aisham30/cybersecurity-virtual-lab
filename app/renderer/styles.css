@@ -899,7 +899,8 @@ body {
 }
 
 .controls-toolbar {
-  background: #ffffff;
+  background: var(--neo-surface-card);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.25rem;
@@ -1206,7 +1207,8 @@ canvas {
 }
 
 .scenario-card-front {
-  background: #ffffff;
+  background: var(--neo-surface-card);
+  color: var(--neo-text);
 }
 
 .scenario-card-front:hover {
@@ -3023,7 +3025,7 @@ body.theme-light .mitigation-card.selected {
 
 /* Text & Button Utilities */
 .btn-primary { background: var(--neo-purple); color: #fff; }
-.btn-secondary { background: #ffffff; color: #000; }
+.btn-secondary { background: var(--neo-surface-alt); color: var(--neo-text); }
 .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
 .btn-xs { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
 .text-red { color: var(--neo-red) !important; font-weight: 800; }
@@ -3078,7 +3080,8 @@ body.theme-light .mitigation-card.selected {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #ffffff;
+  background: var(--neo-surface-card);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -3113,7 +3116,8 @@ body.theme-light .mitigation-card.selected {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #ffffff;
+  background: var(--neo-surface-card);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.25rem;
@@ -3144,15 +3148,16 @@ body.theme-light .mitigation-card.selected {
   text-transform: uppercase;
 }
 
-.res-tag.yellow { background: var(--neo-yellow); }
-.res-tag.lime { background: var(--neo-lime); }
-.res-tag.pink { background: var(--neo-pink); }
-.res-tag.cyan { background: var(--neo-cyan); }
+.res-tag.yellow { background: var(--neo-yellow); color: #000; }
+.res-tag.lime { background: var(--neo-lime); color: #000; }
+.res-tag.pink { background: var(--neo-pink); color: #000; }
+.res-tag.cyan { background: var(--neo-cyan); color: #000; }
 .res-tag.purple { background: var(--neo-purple); color: #fff; }
 
 .res-title {
   font-family: var(--font-display);
   font-size: 1.25rem;
+  color: var(--neo-text);
   margin: 0 0 0.4rem 0;
 }
 
@@ -3178,6 +3183,61 @@ body.theme-light .mitigation-card.selected {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+/* Explicit high-contrast rules for Dark Mode & Light Mode */
+body.theme-dark .scenario-card-item,
+[data-theme="dark"] .scenario-card-item,
+body.theme-dark .mini-resource-card,
+[data-theme="dark"] .mini-resource-card {
+  background: #1c1d29 !important;
+  color: #f8fafc !important;
+}
+
+body.theme-dark .sc-title,
+[data-theme="dark"] .sc-title,
+body.theme-dark .res-title,
+[data-theme="dark"] .res-title {
+  color: #f8fafc !important;
+}
+
+body.theme-dark .sc-hook,
+[data-theme="dark"] .sc-hook,
+body.theme-dark .res-desc,
+[data-theme="dark"] .res-desc {
+  color: #cbd5e1 !important;
+}
+
+body.theme-dark .sc-domain-badge,
+[data-theme="dark"] .sc-domain-badge {
+  color: #94a3b8 !important;
+}
+
+body.theme-light .scenario-card-item,
+[data-theme="light"] .scenario-card-item,
+body.theme-light .mini-resource-card,
+[data-theme="light"] .mini-resource-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+body.theme-light .sc-title,
+[data-theme="light"] .sc-title,
+body.theme-light .res-title,
+[data-theme="light"] .res-title {
+  color: #0f172a !important;
+}
+
+body.theme-light .sc-hook,
+[data-theme="light"] .sc-hook,
+body.theme-light .res-desc,
+[data-theme="light"] .res-desc {
+  color: #475569 !important;
+}
+
+body.theme-light .sc-domain-badge,
+[data-theme="light"] .sc-domain-badge {
+  color: #64748b !important;
 }
 
 /* Notes Toolbar */
@@ -3225,6 +3285,7 @@ body.theme-light .mitigation-card.selected {
   font-size: 0.88rem;
   font-weight: 700;
   background: var(--neo-yellow);
+  color: #000000;
   border: 2px solid #000;
   box-shadow: 2px 2px 0 #000;
   padding: 0.6rem 1rem;
