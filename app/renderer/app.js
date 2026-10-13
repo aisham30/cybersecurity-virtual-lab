@@ -241,26 +241,36 @@ const sfx = {
    ========================================================================== */
 function initThemeToggle() {
   const btnToggle = document.getElementById('btn-theme-toggle');
-  const storedTheme = localStorage.getItem('vlab_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+  if (!btnToggle) return;
+
+  const storedTheme = localStorage.getItem('vlab_theme') || (document.body.classList.contains('theme-dark') ? 'dark' : 'light');
   applyTheme(storedTheme);
 
-  if (btnToggle) {
-    btnToggle.addEventListener('click', () => {
-      const isDark = document.body.classList.contains('theme-dark');
-      const nextTheme = isDark ? 'light' : 'dark';
-      applyTheme(nextTheme);
-      if (typeof sfx !== 'undefined' && sfx.play) {
-        try { sfx.play('click'); } catch (_) {}
-      }
-    });
-  }
+  // Prevent multiple event listeners from attaching on reload or re-init
+  if (btnToggle._hasThemeListener) return;
+  btnToggle._hasThemeListener = true;
+
+  btnToggle.addEventListener('click', (e) => {
+    e.preventDefault();
+    const isCurrentlyDark = document.body.classList.contains('theme-dark');
+    const nextTheme = isCurrentlyDark ? 'light' : 'dark';
+    applyTheme(nextTheme);
+    if (typeof sfx !== 'undefined' && sfx.play) {
+      try { sfx.play('click'); } catch (_) {}
+    }
+  });
 }
 
 function applyTheme(theme) {
   const isDark = theme === 'dark';
   state.theme = theme;
-  document.body.classList.toggle('theme-dark', isDark);
-  document.body.classList.toggle('theme-light', !isDark);
+  if (isDark) {
+    document.body.classList.remove('theme-light');
+    document.body.classList.add('theme-dark');
+  } else {
+    document.body.classList.remove('theme-dark');
+    document.body.classList.add('theme-light');
+  }
   document.documentElement.setAttribute('data-theme', theme);
   localStorage.setItem('vlab_theme', theme);
 
@@ -293,9 +303,6 @@ function initRouter() {
     sfx.play('click');
     navigateToView('landing');
   });
-
-  // Theme toggle button
-  initThemeToggle();
 
   // Landing CTAs
   const btnStartLearning = document.getElementById('btn-start-learning');
@@ -841,8 +848,9 @@ function switchLessonSection(sectionId) {
     sec.classList.toggle('active', sec.id === sectionId);
   });
   const targetEl = document.getElementById(sectionId);
-  if (targetEl) {
-    targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const scrollBody = document.querySelector('.lesson-scroll-body');
+  if (scrollBody && targetEl) {
+    scrollBody.scrollTo({ top: targetEl.offsetTop - 12, behavior: 'smooth' });
   }
 }
 window.switchLessonSection = switchLessonSection;
@@ -1272,29 +1280,29 @@ function openResultsSummaryModal() {
   const peakCpu = state.peakCpu || 28.5;
 
   body.innerHTML = `
-    <div style="background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--neo-lime); padding: 0.85rem; border-radius: 4px; margin-bottom: 1rem;">
+    <div style="background: rgba(16, 185, 129, 0.12); border-left: 4px solid var(--neo-lime); padding: 0.85rem; border-radius: 4px; margin-bottom: 1rem;">
       <h3 style="color: var(--neo-lime); font-size: 0.95rem; margin-bottom: 0.25rem;">✅ Bounded Simulation Completed Successfully</h3>
-      <p style="font-size: 0.82rem; color: var(--text-main);">
+      <p style="font-size: 0.82rem; color: var(--neo-text);">
         The attack ran for its fixed <strong>${state.floodDuration}s</strong> duration against the isolated test container.
         The container has safely recovered to its healthy baseline.
       </p>
     </div>
 
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-      <div style="background: var(--bg-card); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-        <span style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">Observed Peak Packet Rate</span>
-        <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #ffffff;">${peakPps.toLocaleString()} PPS</div>
+      <div style="background: var(--neo-surface-alt); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--neo-border-color);">
+        <span style="font-size: 0.72rem; color: var(--neo-text-dim); text-transform: uppercase;">Observed Peak Packet Rate</span>
+        <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: var(--neo-text);">${peakPps.toLocaleString()} PPS</div>
         <span style="font-size: 0.72rem; color: var(--neo-yellow);">Spike over ~2 PPS baseline</span>
       </div>
-      <div style="background: var(--bg-card); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color);">
-        <span style="font-size: 0.72rem; color: var(--text-dim); text-transform: uppercase;">Observed Peak CPU Utilization</span>
-        <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: #ffffff;">${peakCpu}%</div>
+      <div style="background: var(--neo-surface-alt); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--neo-border-color);">
+        <span style="font-size: 0.72rem; color: var(--neo-text-dim); text-transform: uppercase;">Observed Peak CPU Utilization</span>
+        <div style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 800; color: var(--neo-text);">${peakCpu}%</div>
         <span style="font-size: 0.72rem; color: var(--neo-red);">Approached 30% container cap</span>
       </div>
     </div>
 
     <h4 style="font-size: 0.85rem; color: var(--neo-cyan); margin-bottom: 0.35rem;">Educational Takeaways:</h4>
-    <ul style="font-size: 0.8rem; color: var(--text-muted); margin-left: 1.25rem; line-height: 1.5;">
+    <ul style="font-size: 0.8rem; color: var(--neo-text-muted); margin-left: 1.25rem; line-height: 1.5;">
       <li>During the flood, the Target Server Load Status shifted to <strong>CRITICAL (DoS)</strong> due to high interrupt overhead.</li>
       <li>If legitimate user traffic were arriving, the packets would experience high packet loss and latency timeouts.</li>
       <li>Try clicking <strong>"Apply Mitigation"</strong> to activate iptables rate limiting, then launch the flood again to observe how the defense protects the server!</li>
@@ -1333,9 +1341,9 @@ function initScenariosFlipCards() {
       </div>
       <div class="sc-card-body" style="padding: 1rem; text-align: center;">
         <div class="sc-icon" style="font-size: 2.8rem; margin-bottom: 0.5rem;">${s.icon}</div>
-        <div class="sc-domain-badge" style="font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 0.25rem;">${s.domain}</div>
-        <h3 class="sc-title" style="font-family: var(--font-display); font-size: 1.2rem; margin: 0 0 0.5rem 0;">${s.title}</h3>
-        <p class="sc-hook" style="font-size: 0.88rem; color: #475569; font-style: italic; margin: 0 0 1rem 0;">"${s.hook}"</p>
+        <div class="sc-domain-badge" style="font-size: 0.75rem; font-weight: 800; color: var(--neo-text-dim); text-transform: uppercase; margin-bottom: 0.25rem;">${s.domain}</div>
+        <h3 class="sc-title" style="font-family: var(--font-display); font-size: 1.2rem; color: var(--neo-text); margin: 0 0 0.5rem 0;">${s.title}</h3>
+        <p class="sc-hook" style="font-size: 0.88rem; color: var(--neo-text-muted); font-style: italic; margin: 0 0 1rem 0;">"${s.hook}"</p>
       </div>
       <div class="sc-card-footer" style="padding: 0 1rem 1rem 1rem;">
         <button class="btn btn-primary btn-block sc-action-btn" onclick="sfx.play('click'); openScenarioMiniGame('${key}');">
@@ -1361,29 +1369,29 @@ function renderDomainMockInterface(domainKey, mode) {
   
   if (domainKey === 'transport') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🚌 TransitExpress Bus #402 — Express to Airport</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🚌 TransitExpress Bus #402 — Express to Airport</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? '⚠️ High Load (Race Condition)' : '1 Seat Available'}</span>
         </div>
-        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 0.75rem;">
+        <p style="font-size: 0.85rem; color: var(--neo-text-muted); margin-bottom: 0.75rem;">
           ${isSpike ? 'Five passengers are clicking "Book Seat 12B" simultaneously under high request volume!' : 'Select the final remaining seat (12B) and click Book.'}
         </p>
         
-        <div class="bus-seats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 320px; margin: 0 auto 1rem auto; padding: 12px; background: #f8fafc; border: 2px solid #000;">
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">10A (Booked)</div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">10B (Booked)</div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">11A (Booked)</div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">11B (Booked)</div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">12A (Booked)</div>
-          <div id="bus-seat-12b" class="seat-box available" style="padding: 8px; text-align: center; background: ${isSpike ? '#fca5a5' : '#86efac'}; border: 2px solid #000; font-size: 0.75rem; font-weight: 800; cursor: pointer;" onclick="handleBusSeatClick()">
+        <div class="bus-seats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-width: 320px; margin: 0 auto 1rem auto; padding: 12px; background: var(--neo-surface-alt); border: 2px solid var(--neo-border-color);">
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">10A (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">10B (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">11A (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">11B (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">12A (Booked)</div>
+          <div id="bus-seat-12b" class="seat-box available" style="padding: 8px; text-align: center; background: ${isSpike ? '#fca5a5' : '#86efac'}; color: #000; border: 2px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 800; cursor: pointer;" onclick="handleBusSeatClick()">
             12B ${isSpike ? '⚠️ CONFLICT' : '(OPEN)'}
           </div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">13A (Booked)</div>
-          <div class="seat-box booked" style="padding: 8px; text-align: center; background: #cbd5e1; border: 1px solid #000; font-size: 0.75rem; font-weight: 700;">13B (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">13A (Booked)</div>
+          <div class="seat-box booked" style="padding: 8px; text-align: center; background: var(--neo-surface-elevated); border: 1px solid var(--neo-border-color); font-size: 0.75rem; font-weight: 700; color: var(--neo-text-dim);">13B (Booked)</div>
         </div>
 
-        <div id="bus-booking-msg" style="text-align: center; padding: 0.5rem; font-weight: 700; font-size: 0.85rem; border: 1px dashed #000; background: ${isSpike ? '#fee2e2' : '#f0fdf4'};">
+        <div id="bus-booking-msg" style="text-align: center; padding: 0.5rem; font-weight: 700; font-size: 0.85rem; border: 1px dashed var(--neo-border-color); background: ${isSpike ? 'rgba(239, 68, 68, 0.18)' : 'rgba(34, 197, 94, 0.18)'}; color: var(--neo-text);">
           ${isSpike 
             ? '🚨 DUPLICATE RESERVATION CONFLICT! Both Passenger #1 and Passenger #2 received confirmation for Seat 12B due to concurrency race conditions under flood traffic!' 
             : 'Seat 12B is available. Click seat or click button below to reserve.'}
@@ -1392,102 +1400,102 @@ function renderDomainMockInterface(domainKey, mode) {
     `;
   } else if (domainKey === 'healthcare') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🏥 Metro General Hospital — Appointment Scheduling</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🏥 Metro General Hospital — Appointment Scheduling</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? '504 GATEWAY TIMEOUT' : 'ONLINE'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">❌ Connection timed out: 48,000 requests in queue. Patient lookup queries dropping. Emergency doctors cannot load patient chart history!</p>'
-            : '<p style="margin: 0;">📅 Available Slot: <strong>Dr. Sharma (Cardiology) — 10:30 AM Tomorrow</strong>. Response time: 24ms.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">❌ Connection timed out: 48,000 requests in queue. Patient lookup queries dropping. Emergency doctors cannot load patient chart history!</p>'
+            : '<p style="margin: 0; color: var(--neo-text);">📅 Available Slot: <strong>Dr. Sharma (Cardiology) — 10:30 AM Tomorrow</strong>. Response time: 24ms.</p>'}
         </div>
       </div>
     `;
   } else if (domainKey === 'banking') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🏦 First National Online Banking — Customer Portal</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🏦 First National Online Banking — Customer Portal</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'SERVICE UNREACHABLE' : 'ACCOUNT ACTIVE'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
-          <p style="margin: 0 0 0.5rem 0;">Checking Balance: <strong>$4,250.00 USD</strong> (Data Integrity Safe)</p>
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
+          <p style="margin: 0 0 0.5rem 0; color: var(--neo-text);">Checking Balance: <strong>$4,250.00 USD</strong> (Data Integrity Safe)</p>
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">⚠️ Portal queue overwhelmed (38,000 req/s). Login attempts hanging. NOTE: Funds are secure; this is an Availability failure, NOT account theft!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ Ready for transfer or statement download. Latency: 32ms.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">⚠️ Portal queue overwhelmed (38,000 req/s). Login attempts hanging. NOTE: Funds are secure; this is an Availability failure, NOT account theft!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ Ready for transfer or statement download. Latency: 32ms.</p>'}
         </div>
       </div>
     `;
   } else if (domainKey === 'ecommerce') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🛒 CyberShop — Midnight Flash Sale</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🛒 CyberShop — Midnight Flash Sale</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'CHECKOUT FROZEN' : 'STOCK AVAILABLE'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
-          <p style="margin: 0 0 0.5rem 0;">Item: <strong>Limited Edition Cyber Defense Hoodie ($49.00)</strong> • Stock: 8 items</p>
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
+          <p style="margin: 0 0 0.5rem 0; color: var(--neo-text);">Item: <strong>Limited Edition Cyber Defense Hoodie ($49.00)</strong> • Stock: 8 items</p>
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">⚠️ 65,000 checkout clicks per second! Legitimate shoppers mixing with automated scalper bots. Cart service failing with 503 Service Unavailable!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ Cart response normal. Caching active.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">⚠️ 65,000 checkout clicks per second! Legitimate shoppers mixing with automated scalper bots. Cart service failing with 503 Service Unavailable!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ Cart response normal. Caching active.</p>'}
         </div>
       </div>
     `;
   } else if (domainKey === 'gaming') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🎮 Apex Arena — Competitive Ranked Match #881</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🎮 Apex Arena — Competitive Ranked Match #881</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'HIGH PING: 920ms' : 'PING: 24ms'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">❌ Severe packet loss (48%)! Rubber-banding, player desync, and disconnected clients due to UDP traffic burst!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ 128 tick rate, 0% packet loss. Responsive hit registration.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">❌ Severe packet loss (48%)! Rubber-banding, player desync, and disconnected clients due to UDP traffic burst!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ 128 tick rate, 0% packet loss. Responsive hit registration.</p>'}
         </div>
       </div>
     `;
   } else if (domainKey === 'education') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">🎓 University Exam Portal — CS401 Final Submission</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">🎓 University Exam Portal — CS401 Final Submission</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'SUBMISSION DEADLOCK' : 'PORTAL OPEN'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">⚠️ 10,000 students submitting PDF papers in the final 60 seconds! Database connection pool exhausted; legitimate upload requests timing out!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ Upload endpoint responding in 45ms. Database pool idle.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">⚠️ 10,000 students submitting PDF papers in the final 60 seconds! Database connection pool exhausted; legitimate upload requests timing out!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ Upload endpoint responding in 45ms. Database pool idle.</p>'}
         </div>
       </div>
     `;
   } else if (domainKey === 'cloud') {
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">☁️ CloudGateway API Router — Microservices Cluster</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">☁️ CloudGateway API Router — Microservices Cluster</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'WORKER CRASH (502)' : 'ALL INSTANCES HEALTHY'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">⚠️ Incoming API requests surged to 85,000 req/s. Worker Instance 1 & 2 CPU pinned at 100%, causing cascading restarts!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ Worker 1 (18% CPU), Worker 2 (22% CPU), Worker 3 (15% CPU). Requests balanced smoothly.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">⚠️ Incoming API requests surged to 85,000 req/s. Worker Instance 1 & 2 CPU pinned at 100%, causing cascading restarts!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ Worker 1 (18% CPU), Worker 2 (22% CPU), Worker 3 (15% CPU). Requests balanced smoothly.</p>'}
         </div>
       </div>
     `;
   } else {
     // communication
     return `
-      <div class="card" style="padding: 1rem; border: 2px solid #000; background: #ffffff;">
+      <div class="card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
-          <strong style="font-size: 0.95rem;">💬 ChatBridge Message Broker — Queue Pipeline</strong>
+          <strong style="font-size: 0.95rem; color: var(--neo-text);">💬 ChatBridge Message Broker — Queue Pipeline</strong>
           <span class="badge ${isSpike ? 'badge-danger' : 'badge-success'}">${isSpike ? 'QUEUE SATURATED' : 'QUEUE NORMAL'}</span>
         </div>
-        <div style="padding: 0.75rem; border: 1px solid #000; background: #f8fafc; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-size: 0.85rem;">
           ${isSpike 
-            ? '<p style="color: #e11d48; margin: 0; font-weight: 700;">⚠️ Backpressure failure: 14,000 unhandled messages pending in RAM buffer. Message delivery latency +16 seconds!</p>'
-            : '<p style="margin: 0; color: #16a34a;">✅ Pending messages: 12. Average delivery delay: 15ms.</p>'}
+            ? '<p style="color: var(--neo-red); margin: 0; font-weight: 700;">⚠️ Backpressure failure: 14,000 unhandled messages pending in RAM buffer. Message delivery latency +16 seconds!</p>'
+            : '<p style="margin: 0; color: var(--neo-green); font-weight: 700;">✅ Pending messages: 12. Average delivery delay: 15ms.</p>'}
         </div>
       </div>
     `;
@@ -1523,13 +1531,13 @@ window.openScenarioMiniGame = function(domainKey) {
         </div>
       </div>
 
-      <div class="card" style="margin-bottom: 1.25rem; background: #ffffff;">
+      <div class="card" style="margin-bottom: 1.25rem; background: var(--neo-surface); color: var(--neo-text);">
         <div class="card-retro-header">
           <span class="retro-card-dots">•••</span>
           <span class="retro-card-tag">${s.domain.toUpperCase()} SIMULATOR</span>
         </div>
-        <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin: 0 0 0.25rem 0;">${s.icon} ${s.domain}: ${s.title}</h2>
-        <p style="color: #475569; font-size: 0.95rem; margin: 0;">${s.hook}</p>
+        <h2 style="font-family: var(--font-display); font-size: 1.8rem; margin: 0 0 0.25rem 0; color: var(--neo-text);">${s.icon} ${s.domain}: ${s.title}</h2>
+        <p style="color: var(--neo-text-muted); font-size: 0.95rem; margin: 0;">${s.hook}</p>
       </div>
 
       <!-- 7-Stage Stepper Header -->
@@ -1553,10 +1561,10 @@ window.openScenarioMiniGame = function(domainKey) {
             </div>
             <h3>What is Happening in this Real-Life System?</h3>
             <p style="font-size: 1rem; line-height: 1.6; margin-bottom: 1rem;">${s.situation}</p>
-            <div class="mg-callout-box" style="padding: 1rem; border: 2px solid #000; background: var(--neo-yellow); margin-bottom: 1.25rem;">
+            <div class="mg-callout-box" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-yellow); color: #000; margin-bottom: 1.25rem;">
               <strong>Core Engineering Concept:</strong> ${s.theory}
             </div>
-            <p class="mg-instruction" style="font-size: 0.9rem; color: #475569;">First, test the functioning mock application under normal baseline traffic.</p>
+            <p class="mg-instruction" style="font-size: 0.9rem; color: var(--neo-text-muted);">First, test the functioning mock application under normal baseline traffic.</p>
             <button class="btn btn-primary" onclick="sfx.play('click'); setMiniGameStage(2);">Launch Normal Operation View →</button>
           </div>
         </div>
@@ -1591,7 +1599,7 @@ window.openScenarioMiniGame = function(domainKey) {
               <div class="mg-metric"><span class="mg-label">System State:</span> <span class="mg-val text-lime">${s.normal.healthLabel}</span></div>
             </div>
 
-            <p class="mg-instruction" style="margin-top: 1rem;">Now, test what happens when a sudden massive traffic surge hits this service.</p>
+            <p class="mg-instruction" style="margin-top: 1rem; color: var(--neo-text-muted);">Now, test what happens when a sudden massive traffic surge hits this service.</p>
             <button class="btn btn-attack" onclick="sfx.play('alarm'); setMiniGameStage(3);">Simulate Traffic Spike ⚡</button>
           </div>
         </div>
@@ -1626,7 +1634,7 @@ window.openScenarioMiniGame = function(domainKey) {
               <div class="mg-metric"><span class="mg-label">System State:</span> <span class="mg-val text-red">${s.spike.healthLabel}</span></div>
             </div>
 
-            <p class="mg-instruction" style="margin-top: 1rem;">Service degradation is verified. Let's inspect the telemetry signals to identify the exact root cause.</p>
+            <p class="mg-instruction" style="margin-top: 1rem; color: var(--neo-text-muted);">Service degradation is verified. Let's inspect the telemetry signals to identify the exact root cause.</p>
             <button class="btn btn-primary" onclick="sfx.play('click'); setMiniGameStage(4);">Diagnose the Issue →</button>
           </div>
         </div>
@@ -1649,7 +1657,7 @@ window.openScenarioMiniGame = function(domainKey) {
               `).join('')}
             </div>
 
-            <div id="mg-diagnose-feedback" style="display: none; margin-top: 1.25rem; padding: 1rem; border: 2px solid #000;"></div>
+            <div id="mg-diagnose-feedback" style="display: none; margin-top: 1.25rem; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface-alt);"></div>
           </div>
         </div>
 
@@ -1664,13 +1672,13 @@ window.openScenarioMiniGame = function(domainKey) {
             <p style="margin-bottom: 1.25rem;">Choose a defense mechanism to deploy against this failure mode and observe the recovery:</p>
             <div class="mg-defenses" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
               ${s.defenses.map((opt, idx) => `
-                <div class="card mg-defense-card" style="padding: 1rem; border: 2px solid #000; cursor: pointer; transition: transform 0.15s ease;" onclick="sfx.play('click'); applyScenarioDefense('${domainKey}', ${idx});">
+                <div class="card mg-defense-card" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text); cursor: pointer; transition: transform 0.15s ease;" onclick="sfx.play('click'); applyScenarioDefense('${domainKey}', ${idx});">
                   <div class="card-retro-header">
                     <span class="retro-card-dots">•••</span>
                     <span class="retro-card-tag">DEFENSE OPTION ${idx + 1}</span>
                   </div>
-                  <h4 style="font-family: var(--font-display); font-size: 1.1rem; margin: 0.5rem 0 0.25rem 0;">${opt.name}</h4>
-                  <p style="font-size: 0.88rem; color: #475569; margin-bottom: 1rem;">${opt.description}</p>
+                  <h4 style="font-family: var(--font-display); font-size: 1.1rem; color: var(--neo-text); margin: 0.5rem 0 0.25rem 0;">${opt.name}</h4>
+                  <p style="font-size: 0.88rem; color: var(--neo-text-muted); margin-bottom: 1rem;">${opt.description}</p>
                   <button class="btn btn-primary btn-sm btn-block">Deploy Defense &rarr;</button>
                 </div>
               `).join('')}
@@ -1689,16 +1697,16 @@ window.openScenarioMiniGame = function(domainKey) {
             <p id="mg-recovery-desc" style="font-size: 1rem; margin-bottom: 1.25rem; line-height: 1.5;"></p>
 
             <div class="mg-before-after" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
-              <div class="card" style="padding: 1rem; border: 2px solid #000; background: #fff1f2;">
-                <strong style="color: #e11d48; display: block; margin-bottom: 0.5rem;">BEFORE DEFENSE (UNDER SURGE)</strong>
+              <div class="card" style="padding: 1rem; border: 2px solid var(--neo-red); background: var(--neo-surface-alt); color: var(--neo-text);">
+                <strong style="color: var(--neo-red); display: block; margin-bottom: 0.5rem;">BEFORE DEFENSE (UNDER SURGE)</strong>
                 <div class="mg-metrics critical">
                   <div class="mg-metric"><span>Latency:</span> <span class="text-red">${s.spike.latency}</span></div>
                   <div class="mg-metric"><span>Queue:</span> <span class="text-red">${s.spike.queue}</span></div>
                   <div class="mg-metric"><span>Status:</span> <span class="text-red">${s.spike.healthLabel}</span></div>
                 </div>
               </div>
-              <div class="card" style="padding: 1rem; border: 2px solid #000; background: #f0fdf4;">
-                <strong style="color: #16a34a; display: block; margin-bottom: 0.5rem;">AFTER DEFENSE (PROTECTED)</strong>
+              <div class="card" style="padding: 1rem; border: 2px solid var(--neo-lime); background: var(--neo-surface-alt); color: var(--neo-text);">
+                <strong style="color: var(--neo-lime); display: block; margin-bottom: 0.5rem;">AFTER DEFENSE (PROTECTED)</strong>
                 <div class="mg-metrics healthy">
                   <div class="mg-metric"><span>Latency:</span> <span class="text-lime">${s.normal.latency}</span></div>
                   <div class="mg-metric"><span>Queue:</span> <span class="text-lime">${s.normal.queue}</span></div>
@@ -1722,10 +1730,10 @@ window.openScenarioMiniGame = function(domainKey) {
             </div>
             <div style="text-align: center; margin-bottom: 1.5rem;">
               <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🏆</div>
-              <h3 style="font-family: var(--font-display); font-size: 1.5rem;">Scenario Successfully Mastered!</h3>
-              <p style="color: #475569;">You observed the failure mode, accurately diagnosed the vulnerability, and applied effective defenses.</p>
+              <h3 style="font-family: var(--font-display); font-size: 1.5rem; color: var(--neo-text);">Scenario Successfully Mastered!</h3>
+              <p style="color: var(--neo-text-muted);">You observed the failure mode, accurately diagnosed the vulnerability, and applied effective defenses.</p>
             </div>
-            <div class="mg-takeaway" style="padding: 1.25rem; border: 2px solid #000; background: var(--neo-lime); box-shadow: 3px 3px 0 #000;">
+            <div class="mg-takeaway" style="padding: 1.25rem; border: 2px solid var(--neo-border-color); background: var(--neo-lime); color: #000; box-shadow: 3px 3px 0 var(--neo-shadow-color);">
               <strong style="font-size: 1rem; display: block; margin-bottom: 0.5rem;">Key Engineering Takeaway:</strong>
               <p style="font-size: 0.95rem; line-height: 1.6; margin: 0;">${s.takeaway}</p>
             </div>
@@ -1769,11 +1777,12 @@ window.checkScenarioDiagnose = function(domainKey, selectedIdx) {
   });
 
   fb.style.display = 'block';
-  fb.style.backgroundColor = isCorrect ? '#f0fdf4' : '#fff1f2';
+  fb.style.backgroundColor = 'var(--neo-surface-alt)';
   fb.style.border = `2px solid ${isCorrect ? 'var(--neo-lime)' : 'var(--neo-red)'}`;
+  fb.style.color = 'var(--neo-text)';
   fb.innerHTML = `
-    <strong style="color: ${isCorrect ? '#16a34a' : '#e11d48'}; font-size: 1rem;">${isCorrect ? '✅ Correct Diagnosis!' : '❌ Incorrect Diagnosis'}</strong>
-    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #0f172a;">${option.reason || (isCorrect ? 'You accurately identified the root vulnerability.' : 'Review the telemetry metrics and test another answer.')}</p>
+    <strong style="color: ${isCorrect ? 'var(--neo-lime)' : 'var(--neo-red)'}; font-size: 1rem;">${isCorrect ? '✅ Correct Diagnosis!' : '❌ Incorrect Diagnosis'}</strong>
+    <p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--neo-text);">${option.reason || (isCorrect ? 'You accurately identified the root vulnerability.' : 'Review the telemetry metrics and test another answer.')}</p>
     ${isCorrect ? `<button class="btn btn-primary btn-sm" style="margin-top: 0.75rem;" onclick="sfx.play('click'); setMiniGameStage(5);">Proceed to Deploy Defense →</button>` : ''}
   `;
 };
@@ -1806,7 +1815,7 @@ window.applyScenarioDefense = function(domainKey, selectedIdx) {
     if (desc) desc.innerText = def.effect;
     if (actions) {
       actions.innerHTML = `
-        <div style="padding: 0.75rem; border: 1px solid #000; background: var(--neo-yellow); margin-bottom: 0.75rem; font-size: 0.85rem;">
+        <div style="padding: 0.75rem; border: 1px solid var(--neo-border-color); background: var(--neo-yellow); color: #000; margin-bottom: 0.75rem; font-size: 0.85rem;">
           <strong>Security Analysis:</strong> ${def.explanation}
         </div>
         <button class="btn btn-secondary" onclick="sfx.play('click'); setMiniGameStage(5);">← Choose Another Defense</button>
@@ -2126,16 +2135,16 @@ function renderRevisionContent() {
 
   container.innerHTML = `
     <div class="section-header-banner" style="border-bottom: 2px solid var(--neo-purple); padding-bottom: 1rem; margin-bottom: 1.5rem;">
-      <h2 style="color: #ffffff;">⚡ Last-Minute Revision & High-Yield Exam Summary</h2>
-      <p>Revise the entire topic in 5 to 10 minutes. Includes 15 core definitions, comparison tables, and 15 interactive recall flashcards.</p>
+      <h2 style="color: var(--neo-text);">⚡ Last-Minute Revision & High-Yield Exam Summary</h2>
+      <p style="color: var(--neo-text-muted);">Revise the entire topic in 5 to 10 minutes. Includes 15 core definitions, comparison tables, and 15 interactive recall flashcards.</p>
     </div>
 
     <h3 style="color: var(--neo-cyan); font-size: 1.1rem; margin-bottom: 0.75rem;">1. One-Line Core Definitions</h3>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 2rem;">
       ${defs.map((d) => `
-        <div style="background: var(--bg-card); padding: 0.65rem 0.85rem; border-radius: 6px; border: 1px solid var(--border-color);">
-          <strong style="color: var(--neo-lime); font-size: 0.82rem;">${d.term}:</strong>
-          <span style="font-size: 0.78rem; color: var(--text-muted); display: block;">${d.def}</span>
+        <div style="background: var(--neo-surface); padding: 0.75rem 0.85rem; border: 2px solid var(--neo-border-color); box-shadow: 2px 2px 0 var(--neo-shadow-color);">
+          <strong style="color: var(--neo-purple); font-size: 0.85rem; display: block; margin-bottom: 0.2rem;">${d.term}:</strong>
+          <span style="font-size: 0.82rem; color: var(--neo-text); display: block;">${d.def}</span>
         </div>
       `).join('')}
     </div>
@@ -2163,7 +2172,7 @@ function renderRevisionContent() {
         <div class="flashcard" onclick="this.classList.toggle('revealed')">
           <div class="flashcard-q">Card ${idx + 1}: ${fc.q}</div>
           <div class="flashcard-a">${fc.a}</div>
-          <span style="font-size: 0.68rem; color: var(--text-dim); display: block; margin-top: 0.4rem;">Click card to flip</span>
+          <span style="font-size: 0.68rem; color: var(--neo-text-dim); display: block; margin-top: 0.4rem;">Click card to flip</span>
         </div>
       `).join('')}
     </div>
@@ -2245,17 +2254,17 @@ function renderCurrentQuizQuestion() {
       </span>
     </div>
 
-    <div class="card quiz-question-card" style="padding: 1.5rem; border: 2px solid #000; background: #ffffff;">
-      <div style="font-size: 0.8rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 0.4rem;">
+    <div class="card quiz-question-card" style="padding: 1.5rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
+      <div style="font-size: 0.8rem; font-weight: 800; color: var(--neo-text-dim); text-transform: uppercase; margin-bottom: 0.4rem;">
         Topic: ${q.topic || 'Cybersecurity Concepts'}
       </div>
-      <h3 class="quiz-question-prompt" style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem;">
+      <h3 class="quiz-question-prompt" style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem; color: var(--neo-text);">
         ${currentNum}. ${q.question}
       </h3>
 
       <div class="quiz-options-list" id="quiz-options-list" style="display: flex; flex-direction: column; gap: 0.6rem;">
         ${q.options.map((opt, idx) => `
-          <button class="quiz-option-btn" data-opt-idx="${idx}" onclick="handleOptionSelect(${idx})" style="text-align: left; padding: 0.85rem 1rem; border: 2px solid #000; background: #f8fafc; font-weight: 700; cursor: pointer; transition: all 0.1s ease;">
+          <button class="quiz-option-btn" data-opt-idx="${idx}" onclick="handleOptionSelect(${idx})" style="text-align: left; padding: 0.85rem 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text); font-weight: 700; cursor: pointer; transition: all 0.1s ease;">
             <span style="font-weight: 900; margin-right: 0.5rem;">${String.fromCharCode(65 + idx)}.</span> ${opt}
           </button>
         `).join('')}
@@ -2266,11 +2275,11 @@ function renderCurrentQuizQuestion() {
         <button class="btn btn-primary" id="btn-submit-answer" disabled onclick="submitQuizAnswer()">Submit Answer</button>
       </div>
 
-      <div id="quiz-hint-box" class="quiz-hint-panel" style="display: none; margin-top: 1rem; padding: 0.75rem; border: 2px solid #000; background: #fef9c3; font-size: 0.88rem;">
+      <div id="quiz-hint-box" class="quiz-hint-panel" style="display: none; margin-top: 1rem; padding: 0.75rem; border: 2px solid var(--neo-border-color); background: var(--neo-yellow); color: #000; font-size: 0.88rem;">
         <strong>Hint:</strong> ${q.hint}
       </div>
 
-      <div id="quiz-explanation-box" class="quiz-explanation-panel" style="display: none; margin-top: 1rem; padding: 1rem; border: 2px solid #000;"></div>
+      <div id="quiz-explanation-box" class="quiz-explanation-panel" style="display: none; margin-top: 1rem; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface-alt); color: var(--neo-text);"></div>
     </div>
   `;
 }
@@ -2322,13 +2331,15 @@ window.submitQuizAnswer = function () {
     btn.disabled = true;
     const idx = parseInt(btn.getAttribute('data-opt-idx'), 10);
     if (idx === q.correct) {
-      btn.style.backgroundColor = '#dcfce7';
-      btn.style.borderColor = '#16a34a';
-      btn.innerHTML += ' <span style="float: right; font-weight: 800; color: #16a34a;">✓ CORRECT</span>';
+      btn.style.backgroundColor = 'var(--neo-surface-alt)';
+      btn.style.borderColor = 'var(--neo-lime)';
+      btn.style.color = 'var(--neo-text)';
+      btn.innerHTML += ' <span style="float: right; font-weight: 800; color: var(--neo-lime);">✓ CORRECT</span>';
     } else if (idx === selectedOptionIndex && !isCorrect) {
-      btn.style.backgroundColor = '#fee2e2';
-      btn.style.borderColor = '#e11d48';
-      btn.innerHTML += ' <span style="float: right; font-weight: 800; color: #e11d48;">✗ SELECTED</span>';
+      btn.style.backgroundColor = 'var(--neo-surface-alt)';
+      btn.style.borderColor = 'var(--neo-red)';
+      btn.style.color = 'var(--neo-text)';
+      btn.innerHTML += ' <span style="float: right; font-weight: 800; color: var(--neo-red);">✗ SELECTED</span>';
     }
   });
 
@@ -2336,16 +2347,17 @@ window.submitQuizAnswer = function () {
   const expBox = document.getElementById('quiz-explanation-box');
   if (expBox) {
     expBox.style.display = 'block';
-    expBox.style.backgroundColor = isCorrect ? '#f0fdf4' : '#fff1f2';
-    expBox.style.borderColor = isCorrect ? '#16a34a' : '#e11d48';
+    expBox.style.backgroundColor = 'var(--neo-surface-alt)';
+    expBox.style.borderColor = isCorrect ? 'var(--neo-lime)' : 'var(--neo-red)';
+    expBox.style.color = 'var(--neo-text)';
     expBox.innerHTML = `
-      <h4 style="margin: 0 0 0.5rem 0; color: ${isCorrect ? '#16a34a' : '#e11d48'}; font-weight: 800;">
+      <h4 style="margin: 0 0 0.5rem 0; color: ${isCorrect ? 'var(--neo-lime)' : 'var(--neo-red)'}; font-weight: 800;">
         ${isCorrect ? '✅ Correct Answer!' : '❌ Incorrect'}
       </h4>
-      <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.75rem;">${q.explanation}</p>
+      <p style="font-size: 0.9rem; line-height: 1.5; margin-bottom: 0.75rem; color: var(--neo-text);">${q.explanation}</p>
       ${q.distractors && q.distractors.length > 0 ? `
-        <div class="distractor-notes" style="font-size: 0.82rem; color: #475569; border-top: 1px dashed #cbd5e1; padding-top: 0.5rem;">
-          <strong style="color: #0f172a; display: block; margin-bottom: 0.25rem;">Why other options are incorrect:</strong>
+        <div class="distractor-notes" style="font-size: 0.82rem; color: var(--neo-text-muted); border-top: 1px dashed var(--neo-border-color); padding-top: 0.5rem;">
+          <strong style="color: var(--neo-text); display: block; margin-bottom: 0.25rem;">Why other options are incorrect:</strong>
           ${q.distractors.map((d) => `<div>• ${d}</div>`).join('')}
         </div>
       ` : ''}
@@ -2445,11 +2457,11 @@ function showQuizResults() {
   let weakTopicsHtml = '';
   if (weakTopics.length > 0) {
     weakTopicsHtml = `
-      <div class="weak-topics-box" style="margin: 1.25rem 0; padding: 1rem; border: 2px solid #000; background: #fff1f2; text-align: left;">
-        <h4 style="margin: 0 0 0.5rem 0; color: #e11d48; font-family: var(--font-display); font-size: 1rem;">
+      <div class="weak-topics-box" style="margin: 1.25rem 0; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface-alt); text-align: left;">
+        <h4 style="margin: 0 0 0.5rem 0; color: var(--neo-red); font-family: var(--font-display); font-size: 1rem;">
           ⚠️ Targeted Revision Topics (${weakTopics.length}):
         </h4>
-        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; color: #0f172a;">
+        <ul style="margin: 0; padding-left: 1.25rem; font-size: 0.88rem; color: var(--neo-text);">
           ${weakTopics.map((t) => `<li style="margin-bottom: 0.25rem;"><strong>${t}</strong></li>`).join('')}
         </ul>
       </div>
@@ -2457,29 +2469,29 @@ function showQuizResults() {
   }
 
   resScreen.innerHTML = `
-    <div class="card chaotic-results-card ${scoreOutOf10 >= 9 ? 'confetti-active' : ''}" style="max-width: 680px; margin: 0 auto; padding: 2rem; border: 3px solid #000; background: #ffffff; text-align: center; box-shadow: 6px 6px 0 #000;">
+    <div class="card chaotic-results-card ${scoreOutOf10 >= 9 ? 'confetti-active' : ''}" style="max-width: 680px; margin: 0 auto; padding: 2rem; border: 3px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text); text-align: center; box-shadow: 6px 6px 0 var(--neo-shadow-color);">
       
       <!-- Medal Entrance Visualizer -->
       <div class="medal-award-banner" style="margin-bottom: 1rem; animation: bounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
-        <div class="medal-icon-big" style="font-size: 4.5rem; line-height: 1; filter: drop-shadow(2px 2px 0 #000);">${medalIcon}</div>
-        <div class="medal-title-tag" style="display: inline-block; margin-top: 0.5rem; padding: 0.35rem 1rem; border: 2px solid #000; background: var(--neo-yellow); font-family: var(--font-display); font-size: 1.15rem; font-weight: 800;">
+        <div class="medal-icon-big" style="font-size: 4.5rem; line-height: 1; filter: drop-shadow(2px 2px 0 var(--neo-shadow-color));">${medalIcon}</div>
+        <div class="medal-title-tag" style="display: inline-block; margin-top: 0.5rem; padding: 0.35rem 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-yellow); color: #000; font-family: var(--font-display); font-size: 1.15rem; font-weight: 800;">
           ${medalName}
         </div>
       </div>
 
-      <div class="chaotic-score-circle" style="margin: 1rem auto; padding: 1rem; border: 2px solid #000; background: #f8fafc; display: inline-block; min-width: 180px;">
-        <div style="font-size: 2.5rem; font-weight: 900; font-family: var(--font-display); color: #000;">${scoreOutOf10} / 10</div>
-        <div style="font-size: 1rem; font-weight: 800; color: #475569;">${pct}% ACCURACY</div>
+      <div class="chaotic-score-circle" style="margin: 1rem auto; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface-alt); display: inline-block; min-width: 180px;">
+        <div style="font-size: 2.5rem; font-weight: 900; font-family: var(--font-display); color: var(--neo-text);">${scoreOutOf10} / 10</div>
+        <div style="font-size: 1rem; font-weight: 800; color: var(--neo-text-muted);">${pct}% ACCURACY</div>
       </div>
 
-      <blockquote style="font-size: 1.1rem; font-weight: 800; color: #000; margin: 1rem 0 0.5rem 0; font-style: italic;">
+      <blockquote style="font-size: 1.1rem; font-weight: 800; color: var(--neo-text); margin: 1rem 0 0.5rem 0; font-style: italic;">
         ${resultQuote}
       </blockquote>
-      <p style="font-size: 0.95rem; color: #475569; margin: 0 0 1rem 0;">${playfulComment}</p>
+      <p style="font-size: 0.95rem; color: var(--neo-text-muted); margin: 0 0 1rem 0;">${playfulComment}</p>
 
       ${weakTopicsHtml}
 
-      <div class="recommended-next-box" style="margin: 1.25rem 0; padding: 0.75rem; border: 2px solid #000; background: var(--neo-lime); font-size: 0.9rem; font-weight: 800;">
+      <div class="recommended-next-box" style="margin: 1.25rem 0; padding: 0.75rem; border: 2px solid var(--neo-border-color); background: var(--neo-lime); color: #000; font-size: 0.9rem; font-weight: 800;">
         💡 Recommended Next Step: ${scoreOutOf10 >= 9 ? 'You are ready for the next challenge!' : 'Targeted revision will give you the edge.'}
       </div>
 
@@ -2542,20 +2554,20 @@ window.openReviewMistakesModal = function() {
       const correctText = item.options[item.correctIndex] || 'None';
 
       return `
-        <div class="card" style="margin-bottom: 1rem; padding: 1rem; border: 2px solid #000; background: ${isCorrect ? '#f0fdf4' : '#fff1f2'};">
+        <div class="card" style="margin-bottom: 1rem; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); color: var(--neo-text);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-            <span style="font-weight: 800; font-size: 0.85rem; color: #475569;">QUESTION ${idx + 1} OF 10 • TOPIC: ${item.topic}</span>
+            <span style="font-weight: 800; font-size: 0.85rem; color: var(--neo-text-muted);">QUESTION ${idx + 1} OF 10 • TOPIC: ${item.topic}</span>
             <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">${isCorrect ? '✓ CORRECT' : '✗ INCORRECT'}</span>
           </div>
-          <p style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem;">${item.questionText}</p>
+          <p style="font-weight: 800; font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--neo-text);">${item.questionText}</p>
           
           <div style="font-size: 0.85rem; margin-bottom: 0.5rem;">
-            <div><strong>Your Answer:</strong> <span style="color: ${isCorrect ? '#16a34a' : '#e11d48'}; font-weight: 700;">${userSelectedText}</span></div>
-            ${!isCorrect ? `<div><strong>Correct Answer:</strong> <span style="color: #16a34a; font-weight: 700;">${correctText}</span></div>` : ''}
+            <div><strong>Your Answer:</strong> <span style="color: ${isCorrect ? 'var(--neo-lime)' : 'var(--neo-red)'}; font-weight: 700;">${userSelectedText}</span></div>
+            ${!isCorrect ? `<div><strong>Correct Answer:</strong> <span style="color: var(--neo-lime); font-weight: 700;">${correctText}</span></div>` : ''}
           </div>
 
-          <div style="font-size: 0.85rem; color: #334155; border-top: 1px dashed #cbd5e1; padding-top: 0.5rem;">
-            <strong>Explanation:</strong> ${item.explanation}
+          <div style="font-size: 0.85rem; color: var(--neo-text-muted); border-top: 1px dashed var(--neo-border-color); padding-top: 0.5rem;">
+            <strong style="color: var(--neo-text);">Explanation:</strong> ${item.explanation}
           </div>
         </div>
       `;

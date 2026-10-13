@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="../../node_modules/@fontsource/jetbrains-mono/700.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 
   <!-- Immediate Guaranteed Router (Loaded Before Any HTML Render) -->
@@ -401,7 +401,7 @@
               <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
                 <div>
                   <h2 style="margin: 0; font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 0.5px;">REAL-LIFE SCENARIOS</h2>
-                  <p style="margin: 0.35rem 0 0 0; color: #475569; font-style: italic; font-size: 1rem;">8 everyday systems. 8 things that can go wrong. Can you save them?</p>
+                  <p style="margin: 0.35rem 0 0 0; color: var(--neo-text-muted); font-style: italic; font-size: 1rem;">8 everyday systems. 8 things that can go wrong. Can you save them?</p>
                 </div>
                 <div class="status-pill stopped" style="background: var(--neo-yellow); color: #000; font-weight: 800; border: 2px solid #000; box-shadow: 2px 2px 0 #000; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
                   ⚡ SIMULATED ENVIRONMENT — NO REAL SERVICES AFFECTED
@@ -433,7 +433,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
               <div>
                 <h2 style="margin: 0; font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 0.5px;">CYBER DEFENSE NOTES</h2>
-                <p style="margin: 0.35rem 0 0 0; color: #475569; font-size: 0.95rem;">Five downloadable, professionally structured study guides. Learn at your own pace or revise in minutes.</p>
+                <p style="margin: 0.35rem 0 0 0; color: var(--neo-text-muted); font-size: 0.95rem;">Five downloadable, professionally structured study guides. Learn at your own pace or revise in minutes.</p>
               </div>
               <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
                 <button class="btn btn-primary" id="btn-open-share-notes-modal" onclick="openShareNotesModal()">
@@ -1140,11 +1140,11 @@
           <button class="btn-modal-close" onclick="closeShareNotesModal()">&times;</button>
         </div>
         <div class="modal-body">
-          <p style="font-size: 0.9rem; color: #475569; margin-bottom: 1.25rem;">
+          <p style="font-size: 0.9rem; color: var(--neo-text-muted); margin-bottom: 1.25rem;">
             Spread cybersecurity knowledge! Share the full study library or choose a specific PDF guide to send to peers or study groups.
           </p>
 
-          <div class="share-choice-box" style="margin-bottom: 1.25rem; padding: 1rem; border: 2px solid #000; background: var(--neo-yellow); box-shadow: 2px 2px 0 #000;">
+          <div class="share-choice-box" style="margin-bottom: 1.25rem; padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-yellow); box-shadow: 2px 2px 0 var(--neo-shadow-color);">
             <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-display); font-size: 1.1rem; color: #000;">Choice 1: Share Complete Notes Library</h4>
             <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: #000;">
               Shares the Notes page link with message: <em>“Check out these beginner-friendly Flood Attack cybersecurity notes!”</em>
@@ -1155,12 +1155,12 @@
             </div>
           </div>
 
-          <div class="share-choice-box" style="padding: 1rem; border: 2px solid #000; background: #ffffff; box-shadow: 2px 2px 0 #000;">
-            <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-display); font-size: 1.1rem; color: #000;">Choice 2: Share a Specific PDF Guide</h4>
-            <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: #475569;">
+          <div class="share-choice-box" style="padding: 1rem; border: 2px solid var(--neo-border-color); background: var(--neo-surface); box-shadow: 2px 2px 0 var(--neo-shadow-color);">
+            <h4 style="margin: 0 0 0.5rem 0; font-family: var(--font-display); font-size: 1.1rem; color: var(--neo-text);">Choice 2: Share a Specific PDF Guide</h4>
+            <p style="font-size: 0.85rem; margin-bottom: 0.75rem; color: var(--neo-text-muted);">
               Select one of the 5 downloadable guides to share directly or copy its file link:
             </p>
-            <select id="share-pdf-select" style="width: 100%; padding: 0.6rem; border: 2px solid #000; font-family: var(--font-sans); font-weight: 700; margin-bottom: 0.75rem; background: #fff;">
+            <select id="share-pdf-select" style="width: 100%; padding: 0.6rem; border: 2px solid var(--neo-border-color); font-family: var(--font-sans); font-weight: 700; margin-bottom: 0.75rem; background: var(--neo-surface-alt); color: var(--neo-text);">
               <option value="concept-deep-dive">1. Flood_Attack_Concept_Deep_Dive.pdf</option>
               <option value="last-minute-revision">2. Flood_Attack_Last_Minute_Revision.pdf</option>
               <option value="important-concepts">3. Flood_Attack_Important_Concepts.pdf</option>

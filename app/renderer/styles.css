@@ -53,7 +53,7 @@ body.theme-light,
   --neo-radius: 0px;
 
   /* Typography */
-  --font-display: 'Anton', 'Impact', sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, Menlo, Monaco, Consolas, monospace;
 }
@@ -104,10 +104,19 @@ body.theme-dark,
   }
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+  font-weight: 800;
 }
 
 body {
@@ -204,7 +213,7 @@ body {
 
 .nav-tab {
   background: transparent;
-  color: #000000;
+  color: var(--neo-text);
   border: 2px solid transparent;
   padding: 0.4rem 0.85rem;
   font-family: var(--font-mono);
@@ -218,15 +227,16 @@ body {
 
 .nav-tab:hover {
   background-color: var(--neo-surface-alt);
-  border: 2px solid #000000;
-  box-shadow: 2px 2px 0 #000;
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
+  color: var(--neo-text);
 }
 
 .nav-tab.active {
-  background-color: #000000;
-  color: var(--neo-lime);
-  border: 2px solid #000000;
-  box-shadow: 2px 2px 0 #000000;
+  background-color: var(--neo-lime);
+  color: #000000;
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
 }
 
 .header-right {
@@ -1214,8 +1224,9 @@ canvas {
   font-size: 0.65rem;
   font-weight: 900;
   background: var(--neo-yellow);
+  color: #000000;
   padding: 0.2rem 0.5rem;
-  border: 1px solid #000;
+  border: 1px solid var(--neo-border-color);
   align-self: flex-start;
 }
 
@@ -1223,23 +1234,24 @@ canvas {
 .domain-title {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  color: #000000;
+  color: var(--neo-text);
 }
 .domain-sub {
   font-family: var(--font-sans);
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--neo-text-muted);
 }
 .domain-target-ip {
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--neo-text-dim);
   font-weight: 700;
 }
 
 /* Dedicated Mini-Game Screen */
 .minigame-container {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow-lg);
   padding: 2rem;
@@ -1263,15 +1275,16 @@ canvas {
 .step-chip {
   flex: 1;
   padding: 0.5rem;
-  border: 2px solid #000;
+  border: 2px solid var(--neo-border-color);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 800;
   text-align: center;
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
 }
-.step-chip.active { background: var(--neo-lime); }
-.step-chip.completed { background: var(--neo-cyan); }
+.step-chip.active { background: var(--neo-lime); color: #000000; }
+.step-chip.completed { background: var(--neo-cyan); color: #000000; }
 
 /* ==========================================================================
    VIEW 4: NOTES & SYLLABUS (25 CHAPTERS)
@@ -1287,7 +1300,7 @@ canvas {
 }
 
 .notes-sidebar {
-  background: #ffffff;
+  background: var(--neo-surface);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.25rem;
@@ -1300,12 +1313,13 @@ canvas {
 
 .notes-search-box input {
   width: 100%;
-  border: 2px solid #000;
+  border: 2px solid var(--neo-border-color);
   padding: 0.6rem 0.8rem;
   font-family: var(--font-mono);
   font-size: 0.8rem;
   margin-bottom: 0.75rem;
-  background: #f8fafc;
+  background: var(--neo-surface-alt);
+  color: var(--neo-text);
 }
 
 .btn-revision {
@@ -1331,7 +1345,7 @@ canvas {
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 900;
-  color: #64748b;
+  color: var(--neo-text-dim);
   margin-bottom: 0.5rem;
 }
 
@@ -1346,7 +1360,9 @@ canvas {
 
 .toc-item {
   padding: 0.5rem 0.7rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--neo-border-color);
+  background: var(--neo-surface);
+  color: var(--neo-text);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 700;
@@ -1358,8 +1374,8 @@ canvas {
 }
 
 .toc-item:hover {
-  border-color: #000;
-  background: #f1f5f9;
+  border-color: var(--neo-border-color);
+  background: var(--neo-surface-alt);
 }
 
 .toc-item.active {
@@ -1371,7 +1387,8 @@ canvas {
 
 /* Notes Reading Pane */
 .notes-content-pane {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 2.25rem;
@@ -1381,7 +1398,7 @@ canvas {
 .chapter-title-group h2 {
   font-family: var(--font-display);
   font-size: 2.4rem;
-  color: #000000;
+  color: var(--neo-text);
   margin-bottom: 0.5rem;
 }
 
@@ -1410,21 +1427,22 @@ canvas {
 .chapter-section h3 {
   font-family: var(--font-display);
   font-size: 1.4rem;
-  color: #000000;
+  color: var(--neo-text);
   margin-bottom: 0.5rem;
 }
 
 .chapter-section p {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #334155;
+  color: var(--neo-text-muted);
   margin-bottom: 0.75rem;
 }
 
 .chapter-callout {
-  background: #f1f5f9;
+  background: var(--neo-surface-alt);
+  color: var(--neo-text);
   border-left: 4px solid var(--neo-purple);
-  border: 2px solid #000;
+  border: 2px solid var(--neo-border-color);
   border-left-width: 6px;
   padding: 1rem 1.25rem;
   margin: 1rem 0;
@@ -1443,7 +1461,8 @@ canvas {
 }
 
 .quiz-hero-compact {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.5rem;
@@ -1453,7 +1472,7 @@ canvas {
 .quiz-hero-compact h2 {
   font-family: var(--font-display);
   font-size: 2.2rem;
-  color: #000000;
+  color: var(--neo-text);
 }
 
 .quiz-tier-cards-grid {
@@ -1463,6 +1482,10 @@ canvas {
 }
 
 .quiz-tier-card {
+  background: var(--neo-surface);
+  color: var(--neo-text);
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
   padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -1479,20 +1502,20 @@ canvas {
   align-self: flex-start;
   margin-bottom: 1rem;
 }
-.tier-badge.easy { background: var(--neo-lime); }
-.tier-badge.moderate { background: var(--neo-yellow); }
-.tier-badge.difficult { background: var(--neo-pink); }
+.tier-badge.easy { background: var(--neo-lime); color: #000; }
+.tier-badge.moderate { background: var(--neo-yellow); color: #000; }
+.tier-badge.difficult { background: var(--neo-pink); color: #000; }
 
 .quiz-tier-card h3 {
   font-family: var(--font-display);
   font-size: 1.5rem;
-  color: #000000;
+  color: var(--neo-text);
   margin-bottom: 0.5rem;
 }
 
 .quiz-tier-card p {
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--neo-text-muted);
   line-height: 1.5;
   margin-bottom: 1.25rem;
 }
@@ -1504,13 +1527,14 @@ canvas {
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--neo-text-dim);
   margin-bottom: 1.5rem;
 }
 
 /* Active Question Screen */
 .quiz-active-screen {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow-lg);
   padding: 2.25rem;
@@ -1531,6 +1555,7 @@ canvas {
   font-weight: 800;
   line-height: 1.45;
   margin-bottom: 1.5rem;
+  color: var(--neo-text);
 }
 
 .quiz-options-list {
@@ -1541,9 +1566,10 @@ canvas {
 }
 
 .quiz-option-btn {
-  background: #ffffff;
-  border: 2px solid #000;
-  box-shadow: 2px 2px 0 #000;
+  background: var(--neo-surface);
+  color: var(--neo-text);
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
   padding: 1rem 1.25rem;
   text-align: left;
   font-family: var(--font-sans);
@@ -1554,7 +1580,7 @@ canvas {
 }
 
 .quiz-option-btn:hover {
-  background: #f1f5f9;
+  background: var(--neo-surface-alt);
   transform: translate(-1px, -1px);
 }
 
@@ -1582,7 +1608,8 @@ canvas {
 }
 
 .resources-header-minimal {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.5rem;
@@ -1592,7 +1619,7 @@ canvas {
 .resources-header-minimal h2 {
   font-family: var(--font-display);
   font-size: 2.2rem;
-  color: #000000;
+  color: var(--neo-text);
 }
 
 .three-resources-grid {
@@ -1602,6 +1629,10 @@ canvas {
 }
 
 .mini-resource-card {
+  background: var(--neo-surface);
+  color: var(--neo-text);
+  border: var(--neo-border);
+  box-shadow: var(--neo-shadow);
   padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -1629,13 +1660,13 @@ canvas {
 .res-title {
   font-family: var(--font-display);
   font-size: 1.5rem;
-  color: #000000;
+  color: var(--neo-text);
   margin-bottom: 0.5rem;
 }
 
 .res-desc {
   font-size: 0.9rem;
-  color: #475569;
+  color: var(--neo-text-muted);
   line-height: 1.5;
   margin-bottom: 1.5rem;
 }
@@ -1666,7 +1697,7 @@ canvas {
   max-width: 600px;
   width: 100%;
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   transition: background-color 0.2s ease, color 0.2s ease;
@@ -1683,6 +1714,7 @@ canvas {
   align-items: center;
   justify-content: space-between;
   background: var(--modal-header-bg);
+  flex-shrink: 0;
 }
 
 .modal-title-group {
@@ -1735,6 +1767,7 @@ canvas {
 .modal-body {
   padding: 1.5rem;
   flex: 1;
+  overflow-y: auto;
 }
 
 .modal-footer {
@@ -1744,6 +1777,7 @@ canvas {
   justify-content: flex-end;
   gap: 0.75rem;
   background: var(--modal-footer-bg);
+  flex-shrink: 0;
 }
 
 /* ==========================================================================
@@ -1760,6 +1794,7 @@ canvas {
   background: var(--neo-surface-alt);
   border-bottom: 2px solid var(--neo-border-color);
   overflow-x: auto;
+  flex-shrink: 0;
 }
 
 .lesson-step-tab {
@@ -1783,18 +1818,14 @@ canvas {
 }
 
 .lesson-step-tab.active {
-  background: #000;
-  color: var(--neo-lime);
-  border-color: #000;
-}
-
-body.theme-dark .lesson-step-tab.active {
   background: var(--neo-lime);
-  color: #000;
+  color: #000000;
+  border-color: var(--neo-border-color);
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
 }
 
 .lesson-scroll-body {
-  max-height: 68vh;
+  flex: 1;
   overflow-y: auto;
   padding: 1.25rem 1.5rem;
 }
@@ -2853,22 +2884,23 @@ body.theme-light .mitigation-card.selected {
 .notes-section-block h3 {
   font-family: var(--font-display);
   font-size: 1.3rem;
-  color: #000;
+  color: var(--neo-text);
   margin-bottom: 0.4rem;
 }
 
 .notes-section-block p {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #334155;
+  color: var(--neo-text-muted);
 }
 
 .analogy-callout {
-  background: #f1f5f9;
+  background: var(--neo-surface-alt);
+  color: var(--neo-text);
   border-left: 6px solid var(--neo-purple);
-  border: 2px solid #000;
+  border: 2px solid var(--neo-border-color);
   border-left-width: 6px;
-  box-shadow: 2px 2px 0 #000;
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
   font-size: 0.9rem;
@@ -2876,13 +2908,13 @@ body.theme-light .mitigation-card.selected {
 }
 
 .diagram-ascii-box {
-  background: #0f172a;
+  background: var(--code-bg);
   color: var(--neo-lime);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   padding: 1rem;
-  border: 2px solid #000;
-  box-shadow: 2px 2px 0 #000;
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 2px 2px 0 var(--neo-shadow-color);
   overflow-x: auto;
   white-space: pre;
 }
@@ -2894,25 +2926,27 @@ body.theme-light .mitigation-card.selected {
 }
 
 .term-tag {
-  background: #ffffff;
-  border: 2px solid #000;
-  box-shadow: 1px 1px 0 #000;
-  padding: 0.25rem 0.6rem;
+  background: var(--neo-surface-alt);
+  color: var(--neo-text);
+  border: 1.5px solid var(--neo-border-color);
+  box-shadow: 1px 1px 0 var(--neo-shadow-color);
+  padding: 0.2rem 0.5rem;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 800;
 }
 
 .review-qna-block {
-  background: #ffffff;
-  border: 2px solid #000;
-  box-shadow: 3px 3px 0 #000;
+  background: var(--neo-surface);
+  color: var(--neo-text);
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 3px 3px 0 var(--neo-shadow-color);
   padding: 1.25rem;
   margin-bottom: 1.5rem;
 }
 
 .qna-item {
-  border-bottom: 1px solid #cbd5e1;
+  border-bottom: 1px solid var(--neo-border-color);
   padding: 0.75rem 0;
 }
 
@@ -2923,13 +2957,14 @@ body.theme-light .mitigation-card.selected {
   font-weight: 800;
   font-size: 0.9rem;
   cursor: pointer;
+  color: var(--neo-text);
 }
 
 .qna-answer {
   display: none;
   margin-top: 0.5rem;
   font-size: 0.85rem;
-  color: #475569;
+  color: var(--neo-text-muted);
   padding-left: 0.5rem;
   border-left: 3px solid var(--neo-lime);
 }
@@ -2940,8 +2975,9 @@ body.theme-light .mitigation-card.selected {
 
 .remember-summary-box {
   background: var(--neo-lime);
-  border: 2px solid #000;
-  box-shadow: 3px 3px 0 #000;
+  color: #000000;
+  border: 2px solid var(--neo-border-color);
+  box-shadow: 3px 3px 0 var(--neo-shadow-color);
   padding: 1rem 1.25rem;
   margin-bottom: 1.5rem;
 }
@@ -2951,7 +2987,7 @@ body.theme-light .mitigation-card.selected {
   justify-content: space-between;
   margin-top: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 2px solid #000;
+  border-top: 2px solid var(--neo-border-color);
 }
 
 /* Flashcards */
@@ -2963,7 +2999,8 @@ body.theme-light .mitigation-card.selected {
 }
 
 .flashcard {
-  background: #ffffff;
+  background: var(--neo-surface);
+  color: var(--neo-text);
   border: var(--neo-border);
   box-shadow: var(--neo-shadow);
   padding: 1.25rem;
@@ -2980,8 +3017,8 @@ body.theme-light .mitigation-card.selected {
   box-shadow: var(--neo-shadow-lg);
 }
 
-.flashcard-q { font-weight: 800; font-size: 0.95rem; }
-.flashcard-a { display: none; font-size: 0.85rem; color: #334155; margin-top: 0.5rem; }
+.flashcard-q { font-weight: 800; font-size: 0.95rem; color: var(--neo-text); }
+.flashcard-a { display: none; font-size: 0.85rem; color: var(--neo-text-muted); margin-top: 0.5rem; }
 .flashcard.revealed .flashcard-a { display: block; color: var(--neo-purple); font-weight: 700; }
 
 /* Text & Button Utilities */
@@ -3121,7 +3158,7 @@ body.theme-light .mitigation-card.selected {
 
 .res-desc {
   font-size: 0.88rem;
-  color: #475569;
+  color: var(--neo-text-muted);
   line-height: 1.45;
   margin: 0 0 0.75rem 0;
   flex-grow: 1;
@@ -3130,9 +3167,9 @@ body.theme-light .mitigation-card.selected {
 .res-filename {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #0f172a;
-  background: #f1f5f9;
-  border: 1px dashed #000;
+  color: var(--neo-text);
+  background: var(--neo-surface-alt);
+  border: 1px dashed var(--neo-border-color);
   padding: 4px 6px;
   margin-bottom: 1rem;
 }
