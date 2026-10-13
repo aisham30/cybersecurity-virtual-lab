@@ -14,8 +14,12 @@ contextBridge.exposeInMainWorld('vlab', {
 
   // Attack & Defense Actions
   startFlood: (durationSeconds) => ipcRenderer.invoke('attack:startFlood', durationSeconds),
-  applyMitigation: () => ipcRenderer.invoke('attack:applyMitigation'),
+  applyMitigation: (method) => ipcRenderer.invoke('attack:applyMitigation', method),
   removeMitigation: () => ipcRenderer.invoke('attack:removeMitigation'),
+
+  // PDF & Educational Resources
+  downloadPdf: (type) => ipcRenderer.invoke('pdf:download', type),
+  openPdf: (type) => ipcRenderer.invoke('pdf:open', type),
 
   // Embedded Terminal
   openTerminal: () => ipcRenderer.invoke('terminal:open'),

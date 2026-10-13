@@ -152,7 +152,9 @@ class LabManager extends EventEmitter {
       throw new LabError('TERMINAL_UNAVAILABLE', 'Start the lab first to attach the attacker terminal.');
     }
     if (this.isSimulated) {
-      return { container: 'icmp-attacker (simulated)', service: 'attacker' };
+      const info = this.terminals.openSimulated('icmp-flood');
+      this.logs.add('icmp-flood', 'info', 'terminal', 'Terminal attached in Interactive Simulation Mode.');
+      return info;
     }
     const info = await this.terminals.open('icmp-flood', {
       project: 'cybersecurity-virtual-lab',

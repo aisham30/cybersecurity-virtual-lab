@@ -6,7 +6,7 @@
 const { ipcMain, dialog, shell } = require('electron');
 const fs = require('fs');
 
-function setupIPC({ labManager, logService, metricsService, attackService, terminalService, getMainWindow }) {
+function setupIPC({ labManager, logService, metricsService, attackService, terminalService, pdfService, getMainWindow }) {
   // --- Lab Controls ---
   ipcMain.handle('lab:start', async () => {
     return labManager.start();
@@ -29,12 +29,24 @@ function setupIPC({ labManager, logService, metricsService, attackService, termi
     return attackService.startFlood(durationSeconds, labManager.isSimulated);
   });
 
-  ipcMain.handle('attack:applyMitigation', async () => {
-    return attackService.applyMitigation(labManager.isSimulated);
+  ipcMain.handle('attack:applyMitigation', async (_, method = 'rate-limiting') => {
+    return attackService.applyMitigation(method, labManager.isSimulated);
   });
 
   ipcMain.handle('attack:removeMitigation', async () => {
     return attackService.removeMitigation(labManager.isSimulated);
+  });
+
+  // --- PDF & Educational Resources ---
+  ipcMain.handle('pdf:download', async (_, type) => {
+    const win = getMainWindow();
+    if (!pdfService) return { success: false, error: 'PDF Service not initialized' };
+    return pdfService.exportPdf(type, win);
+  });
+
+  ipcMain.handle('pdf:open', async (_, type) => {
+    if (!pdfService) return { success: false, error: 'PDF Service not initialized' };
+    return pdfService.openPdf(type);
   });
 
   // --- Terminal ---

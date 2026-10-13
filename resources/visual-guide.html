@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flood Attack — Charts & Diagrams Visual Learning Guide</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      background: #ffffff;
+      font-size: 10.5pt;
+      line-height: 1.4;
+    }
+    .page {
+      width: 190mm;
+      height: 277mm;
+      max-height: 277mm;
+      min-height: 277mm;
+      page-break-after: always;
+      break-after: page;
+      position: relative;
+      padding: 8mm 8mm 12mm 8mm;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      margin-bottom: 5mm;
+    }
+    @media print {
+      body { background: transparent; }
+      .page {
+        margin: 0;
+        border: none;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #0284c7;
+      padding-bottom: 4px;
+      margin-bottom: 10px;
+      font-size: 8.5pt;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .page-footer {
+      position: absolute;
+      bottom: 6mm;
+      left: 8mm;
+      right: 8mm;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 4px;
+      font-size: 8pt;
+      color: #94a3b8;
+    }
+    h1 {
+      font-size: 17pt;
+      color: #0f172a;
+      margin-bottom: 4px;
+      font-weight: 900;
+    }
+    h2 {
+      font-size: 12.5pt;
+      color: #0369a1;
+      margin-top: 6px;
+      margin-bottom: 6px;
+      font-weight: 800;
+      border-left: 4px solid #0284c7;
+      padding-left: 8px;
+    }
+    p {
+      margin-bottom: 6px;
+      font-size: 9pt;
+      color: #334155;
+    }
+    .svg-box {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      margin: 8px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 6px 0;
+    }
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px;
+    }
+    .info-card h4 {
+      font-size: 9pt;
+      color: #0369a1;
+      margin-bottom: 3px;
+      font-weight: 700;
+    }
+    .info-card p {
+      font-size: 8.5pt;
+      margin-bottom: 0;
+      color: #475569;
+    }
+    .legend {
+      display: flex;
+      gap: 12px;
+      font-size: 8pt;
+      margin: 4px 0 8px 0;
+      justify-content: center;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==================== PAGE 1 ==================== -->
+  <div class="page" id="page-1">
+    <div class="page-header">
+      <span>VLab Visual Learning Guide</span>
+      <span>Document ID: VLAB-VG-01</span>
+    </div>
+
+    <div style="background: #0f172a; color: #fff; padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; border-left: 6px solid #38bdf8;">
+      <span style="background: #0369a1; color: #fff; padding: 2px 6px; border-radius: 4px; font-size: 7.5pt; font-weight: 800;">VISUAL DIAGRAMS & CHARTS</span>
+      <h1 style="color: #ffffff; margin-top: 4px; font-size: 16pt;">FLOOD ATTACKS AT A GLANCE</h1>
+      <p style="color: #94a3b8; font-size: 9pt; margin-bottom: 0;">A Visual Guide to Network Exhaustion, Traffic Telemetry, and Defense Topologies</p>
+    </div>
+
+    <h2>1. The CIA Triad: Where Floods Strike</h2>
+    <div class="svg-box">
+      <svg width="480" height="110" viewBox="0 0 480 110">
+        <!-- Confidentiality -->
+        <rect x="20" y="15" width="130" height="80" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+        <text x="85" y="45" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Confidentiality</text>
+        <text x="85" y="65" font-family="sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Keeping data private</text>
+        <text x="85" y="80" font-family="sans-serif" font-size="8" fill="#10b981" font-weight="bold" text-anchor="middle">✓ Unharmed by Floods</text>
+
+        <!-- Integrity -->
+        <rect x="175" y="15" width="130" height="80" rx="8" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="2"/>
+        <text x="240" y="45" font-family="sans-serif" font-size="12" font-weight="bold" fill="#475569" text-anchor="middle">Integrity</text>
+        <text x="240" y="65" font-family="sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Data is not altered</text>
+        <text x="240" y="80" font-family="sans-serif" font-size="8" fill="#10b981" font-weight="bold" text-anchor="middle">✓ Unharmed by Floods</text>
+
+        <!-- Availability -->
+        <rect x="330" y="10" width="135" height="90" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="3"/>
+        <text x="397" y="40" font-family="sans-serif" font-size="13" font-weight="bold" fill="#b91c1c" text-anchor="middle">Availability</text>
+        <text x="397" y="60" font-family="sans-serif" font-size="9" fill="#7f1d1d" text-anchor="middle">System is online & reachable</text>
+        <text x="397" y="82" font-family="sans-serif" font-size="9" fill="#ef4444" font-weight="bold" text-anchor="middle">⚠️ PRIMARY TARGET</text>
+      </svg>
+    </div>
+
+    <h2>2. Visual Analogy: The Doorbell Flood</h2>
+    <div class="svg-box">
+      <svg width="480" height="110" viewBox="0 0 480 110">
+        <!-- Attacker -->
+        <rect x="15" y="25" width="90" height="60" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="60" y="50" font-family="sans-serif" font-size="10" font-weight="bold" fill="#991b1b" text-anchor="middle">Attacker</text>
+        <text x="60" y="68" font-family="sans-serif" font-size="8" fill="#b91c1c" text-anchor="middle">Repeated Pings</text>
+
+        <!-- Arrows -->
+        <path d="M 110 40 L 190 40" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)"/>
+        <path d="M 110 55 L 190 55" stroke="#ef4444" stroke-width="2"/>
+        <path d="M 110 70 L 190 70" stroke="#ef4444" stroke-width="2"/>
+        <text x="150" y="32" font-family="sans-serif" font-size="8" fill="#ef4444" text-anchor="middle">50,000 Pings/sec</text>
+
+        <!-- Target Office Door -->
+        <rect x="200" y="15" width="110" height="80" rx="6" fill="#f8fafc" stroke="#334155" stroke-width="2"/>
+        <text x="255" y="45" font-family="sans-serif" font-size="10" font-weight="bold" fill="#0f172a" text-anchor="middle">Target Server</text>
+        <text x="255" y="62" font-family="sans-serif" font-size="8" fill="#dc2626" font-weight="bold" text-anchor="middle">100% CPU Locked!</text>
+        <text x="255" y="78" font-family="sans-serif" font-size="8" fill="#64748b" text-anchor="middle">Answering Door</text>
+
+        <!-- Legitimate User Blocked -->
+        <rect x="375" y="25" width="90" height="60" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="420" y="50" font-family="sans-serif" font-size="10" font-weight="bold" fill="#475569" text-anchor="middle">Real Student</text>
+        <text x="420" y="68" font-family="sans-serif" font-size="8" fill="#dc2626" font-weight="bold" text-anchor="middle">❌ Timed Out</text>
+        <path d="M 370 55 L 320 55" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4"/>
+      </svg>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>The Attack Objective</h4>
+        <p>A flood attack does not compromise secret keys or install malware. Its sole goal is to overwhelm capacity until the system cannot operate.</p>
+      </div>
+      <div class="info-card">
+        <h4>The Defensive Challenge</h4>
+        <p>Because each individual ping or request appears structurally valid, simple inspection cannot distinguish a malicious packet from a normal one without rate-tracking.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 1 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 2 ==================== -->
+  <div class="page" id="page-2">
+    <div class="page-header">
+      <span>Network Architecture Mechanics</span>
+      <span>Chapter 2</span>
+    </div>
+
+    <h2>1. How Network Packets Travel from Client to Server</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Client -->
+        <rect x="10" y="30" width="85" height="70" rx="6" fill="#e0f2fe" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="52" y="55" font-family="sans-serif" font-size="9" font-weight="bold" fill="#0369a1" text-anchor="middle">Client Laptop</text>
+        <text x="52" y="70" font-family="sans-serif" font-size="7.5" fill="#0c4a6e" text-anchor="middle">IP: 192.168.1.5</text>
+        <text x="52" y="85" font-family="sans-serif" font-size="7.5" fill="#0284c7" text-anchor="middle">Port: 54321</text>
+
+        <!-- Pipe 1 -->
+        <line x1="95" y1="65" x2="140" y2="65" stroke="#0284c7" stroke-width="2"/>
+        <text x="117" y="60" font-family="sans-serif" font-size="7" fill="#64748b" text-anchor="middle">WiFi</text>
+
+        <!-- Router -->
+        <rect x="140" y="40" width="65" height="50" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+        <text x="172" y="65" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#334155" text-anchor="middle">Gateway</text>
+        <text x="172" y="78" font-family="sans-serif" font-size="7" fill="#64748b" text-anchor="middle">Router</text>
+
+        <!-- Internet Cloud -->
+        <ellipse cx="250" cy="65" rx="35" ry="25" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="250" y="68" font-family="sans-serif" font-size="8" font-weight="bold" fill="#475569" text-anchor="middle">Internet</text>
+
+        <!-- ISP Border -->
+        <line x1="285" y1="65" x2="320" y2="65" stroke="#64748b" stroke-width="2"/>
+
+        <!-- Server Firewall -->
+        <rect x="320" y="40" width="60" height="50" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="350" y="65" font-family="sans-serif" font-size="8" font-weight="bold" fill="#92400e" text-anchor="middle">Firewall</text>
+        <text x="350" y="78" font-family="sans-serif" font-size="7" fill="#b45309" text-anchor="middle">iptables</text>
+
+        <!-- Pipe 3 -->
+        <line x1="380" y1="65" x2="400" y2="65" stroke="#10b981" stroke-width="2"/>
+
+        <!-- Web Server -->
+        <rect x="400" y="30" width="75" height="70" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="437" y="55" font-family="sans-serif" font-size="9" font-weight="bold" fill="#065f46" text-anchor="middle">Web Server</text>
+        <text x="437" y="70" font-family="sans-serif" font-size="7.5" fill="#047857" text-anchor="middle">IP: 203.0.113.1</text>
+        <text x="437" y="85" font-family="sans-serif" font-size="7.5" fill="#059669" text-anchor="middle">Port: 80 / 443</text>
+      </svg>
+    </div>
+
+    <h2>2. Anatomy of a Network Packet Envelope</h2>
+    <div class="svg-box">
+      <svg width="480" height="75" viewBox="0 0 480 75">
+        <!-- IP Header -->
+        <rect x="10" y="10" width="120" height="50" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="70" y="30" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#1e293b" text-anchor="middle">IP Header (20 Bytes)</text>
+        <text x="70" y="48" font-family="sans-serif" font-size="7.5" fill="#475569" text-anchor="middle">Src IP: 192.168.1.5 | Dst IP</text>
+
+        <!-- Protocol Header -->
+        <rect x="135" y="10" width="135" height="50" fill="#fef08a" stroke="#ca8a04" stroke-width="1.5"/>
+        <text x="202" y="30" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#854d0e" text-anchor="middle">ICMP / TCP Header</text>
+        <text x="202" y="48" font-family="sans-serif" font-size="7.5" fill="#a16207" text-anchor="middle">Type 8 (Echo) / Port Numbers</text>
+
+        <!-- Payload -->
+        <rect x="275" y="10" width="195" height="50" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5"/>
+        <text x="372" y="30" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#15803d" text-anchor="middle">Data Payload (up to 1460 Bytes)</text>
+        <text x="372" y="48" font-family="sans-serif" font-size="7.5" fill="#166534" text-anchor="middle">Timestamp, Diagnostic string, or HTTP body</text>
+      </svg>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>Bandwidth vs Latency</h4>
+        <p><strong>Bandwidth:</strong> Highway lane capacity (Gbps).<br>
+        <strong>Latency:</strong> Time required to complete the round-trip (ms).</p>
+      </div>
+      <div class="info-card">
+        <h4>Hardware Packet Interrupts</h4>
+        <p>Every single packet demands attention from the server's CPU kernel. Processing 40,000 headers per second leaves zero processing power for applications.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 2 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 3 ==================== -->
+  <div class="page" id="page-3">
+    <div class="page-header">
+      <span>ICMP Ping Request & Reply Mechanics</span>
+      <span>Chapter 3</span>
+    </div>
+
+    <h2>1. Normal Ping vs ICMP Flood Comparison</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Normal Ping Side -->
+        <rect x="10" y="10" width="225" height="130" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+        <text x="122" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#166534" text-anchor="middle">Normal Ping (1 PPS)</text>
+
+        <rect x="25" y="45" width="40" height="35" rx="4" fill="#fff" stroke="#15803d"/>
+        <text x="45" y="66" font-family="sans-serif" font-size="7" fill="#166534" text-anchor="middle">Admin</text>
+
+        <path d="M 70 55 L 150 55" stroke="#15803d" stroke-width="1.5"/>
+        <text x="110" y="50" font-family="sans-serif" font-size="6.5" fill="#166534" text-anchor="middle">Type 8 Echo Req</text>
+
+        <path d="M 150 70 L 70 70" stroke="#15803d" stroke-width="1.5" stroke-dasharray="3"/>
+        <text x="110" y="82" font-family="sans-serif" font-size="6.5" fill="#166534" text-anchor="middle">Type 0 Echo Rep</text>
+
+        <rect x="155" y="45" width="45" height="35" rx="4" fill="#fff" stroke="#15803d"/>
+        <text x="177" y="66" font-family="sans-serif" font-size="7" fill="#166534" text-anchor="middle">Target</text>
+
+        <text x="122" y="110" font-family="sans-serif" font-size="8" fill="#166534" text-anchor="middle">CPU Utilization: ~1%</text>
+        <text x="122" y="125" font-family="sans-serif" font-size="8" fill="#166534" text-anchor="middle">Latency: 12ms (Clean RTT)</text>
+
+        <!-- Flood Attack Side -->
+        <rect x="245" y="10" width="225" height="130" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="1"/>
+        <text x="357" y="30" font-family="sans-serif" font-size="10" font-weight="bold" fill="#991b1b" text-anchor="middle">ICMP Flood (35,000+ PPS)</text>
+
+        <rect x="255" y="45" width="40" height="35" rx="4" fill="#fff" stroke="#b91c1c"/>
+        <text x="275" y="66" font-family="sans-serif" font-size="7" fill="#991b1b" text-anchor="middle">hping3</text>
+
+        <!-- Barrage of lines -->
+        <line x1="300" y1="50" x2="380" y2="50" stroke="#ef4444" stroke-width="2"/>
+        <line x1="300" y1="55" x2="380" y2="55" stroke="#ef4444" stroke-width="2"/>
+        <line x1="300" y1="60" x2="380" y2="60" stroke="#ef4444" stroke-width="2"/>
+        <line x1="300" y1="65" x2="380" y2="65" stroke="#ef4444" stroke-width="2"/>
+        <line x1="300" y1="70" x2="380" y2="70" stroke="#ef4444" stroke-width="2"/>
+
+        <rect x="385" y="45" width="45" height="35" rx="4" fill="#fee2e2" stroke="#b91c1c"/>
+        <text x="407" y="66" font-family="sans-serif" font-size="7" font-weight="bold" fill="#b91c1c" text-anchor="middle">OVERLOAD</text>
+
+        <text x="357" y="110" font-family="sans-serif" font-size="8" font-weight="bold" fill="#b91c1c" text-anchor="middle">CPU Utilization: 100% Core Limit</text>
+        <text x="357" y="125" font-family="sans-serif" font-size="8" font-weight="bold" fill="#b91c1c" text-anchor="middle">Latency: TIMEOUT / Packet Drop</text>
+      </svg>
+    </div>
+
+    <h2>2. ICMP Message Code Architecture</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>ICMP Type 8: Echo Request</h4>
+        <p>Sent by the diagnostic client. Contains identifier, sequence number, and optional data payload. Triggers an obligatory response from the receiver.</p>
+      </div>
+      <div class="info-card">
+        <h4>ICMP Type 0: Echo Reply</h4>
+        <p>Sent by the target server. Must mirror the exact identifier and data payload of the incoming Echo Request, forcing the server to construct packets in RAM.</p>
+      </div>
+    </div>
+
+    <div class="info-card" style="border-left: 4px solid #ef4444; background: #fff5f5;">
+      <h4>Why ICMP Floods are Deadly to Small Servers</h4>
+      <p>Because ICMP is connectionless, the attacker does not need to complete a handshake or maintain memory state. The attacker simply fires raw packets at wire speed. The target, however, must expend CPU cycles decoding each packet, computing checksums, and building reply packets.</p>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 3 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 4 ==================== -->
+  <div class="page" id="page-4">
+    <div class="page-header">
+      <span>Attack Types Comparison Matrix</span>
+      <span>Chapter 4</span>
+    </div>
+
+    <h2>1. 4-Quadrant Attack Vector Taxonomy</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Quadrant 1: ICMP -->
+        <rect x="10" y="10" width="225" height="62" rx="4" fill="#f8fafc" stroke="#64748b"/>
+        <text x="20" y="28" font-family="sans-serif" font-size="9" font-weight="bold" fill="#0f172a">1. ICMP Flood (Layer 3)</text>
+        <text x="20" y="42" font-family="sans-serif" font-size="7.5" fill="#475569">Target: Host CPU & SoftIRQs</text>
+        <text x="20" y="56" font-family="sans-serif" font-size="7.5" fill="#0284c7">Defense: iptables ICMP rate limiting</text>
+
+        <!-- Quadrant 2: TCP SYN -->
+        <rect x="245" y="10" width="225" height="62" rx="4" fill="#f8fafc" stroke="#64748b"/>
+        <text x="255" y="28" font-family="sans-serif" font-size="9" font-weight="bold" fill="#0f172a">2. TCP SYN Flood (Layer 4)</text>
+        <text x="255" y="42" font-family="sans-serif" font-size="7.5" fill="#475569">Target: TCP Backlog Queue (RAM)</text>
+        <text x="255" y="56" font-family="sans-serif" font-size="7.5" fill="#0284c7">Defense: SYN Cookies & SYN rate limits</text>
+
+        <!-- Quadrant 3: UDP Flood -->
+        <rect x="10" y="78" width="225" height="62" rx="4" fill="#f8fafc" stroke="#64748b"/>
+        <text x="20" y="96" font-family="sans-serif" font-size="9" font-weight="bold" fill="#0f172a">3. UDP Flood (Layer 4)</text>
+        <text x="20" y="110" font-family="sans-serif" font-size="7.5" fill="#475569">Target: Network Bandwidth (Gbps)</text>
+        <text x="20" y="124" font-family="sans-serif" font-size="7.5" fill="#0284c7">Defense: ISP Scrubbing & Port Filtering</text>
+
+        <!-- Quadrant 4: HTTP Flood -->
+        <rect x="245" y="78" width="225" height="62" rx="4" fill="#f8fafc" stroke="#64748b"/>
+        <text x="255" y="96" font-family="sans-serif" font-size="9" font-weight="bold" fill="#0f172a">4. HTTP Flood (Layer 7)</text>
+        <text x="255" y="110" font-family="sans-serif" font-size="7.5" fill="#475569">Target: App Workers & Database</text>
+        <text x="255" y="124" font-family="sans-serif" font-size="7.5" fill="#0284c7">Defense: WAF, CAPTCHAs, Reverse Proxies</text>
+      </svg>
+    </div>
+
+    <h2>2. Network Layer vs Application Layer Exhaustion</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>Volumetric (Layer 3 & 4)</h4>
+        <p>Goal is brute force pipe saturation. Measured in Gigabits per second (Gbps) or Millions of Packets per second (Mpps). Requires high attacker bandwidth or botnet amplification.</p>
+      </div>
+      <div class="info-card">
+        <h4>Application (Layer 7)</h4>
+        <p>Goal is exhausting backend computation (e.g. database search queries or SSL handshakes). Requires very low bandwidth from attacker but brings down multi-core databases.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 4 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 5 ==================== -->
+  <div class="page" id="page-5">
+    <div class="page-header">
+      <span>System Resource Overload Progression</span>
+      <span>Chapter 5</span>
+    </div>
+
+    <h2>1. The 4-Phase Overload Progression Timeline</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Axes -->
+        <line x1="35" y1="125" x2="460" y2="125" stroke="#475569" stroke-width="1.5"/>
+        <line x1="35" y1="15" x2="35" y2="125" stroke="#475569" stroke-width="1.5"/>
+        <text x="15" y="70" font-family="sans-serif" font-size="7.5" fill="#475569" transform="rotate(-90 15,70)" text-anchor="middle">Load % / PPS</text>
+
+        <!-- Phase 1: Baseline -->
+        <rect x="35" y="15" width="80" height="110" fill="#f0fdf4" opacity="0.5"/>
+        <text x="75" y="25" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#166534" text-anchor="middle">1. Baseline</text>
+
+        <!-- Phase 2: Spike -->
+        <rect x="115" y="15" width="100" height="110" fill="#fffbeb" opacity="0.5"/>
+        <text x="165" y="25" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#b45309" text-anchor="middle">2. Traffic Spike</text>
+
+        <!-- Phase 3: DoS Saturation -->
+        <rect x="215" y="15" width="130" height="110" fill="#fef2f2" opacity="0.5"/>
+        <text x="280" y="25" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#b91c1c" text-anchor="middle">3. DoS Saturation</text>
+
+        <!-- Phase 4: Recovery -->
+        <rect x="345" y="15" width="115" height="110" fill="#eff6ff" opacity="0.5"/>
+        <text x="402" y="25" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#1d4ed8" text-anchor="middle">4. Mitigated Recovery</text>
+
+        <!-- CPU Curve (Red) -->
+        <path d="M 35 120 L 115 118 Q 145 70, 215 35 L 345 35 Q 360 100, 460 115" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+
+        <!-- PPS Curve (Blue) -->
+        <path d="M 35 124 L 115 122 Q 130 50, 215 30 L 345 30 Q 355 120, 460 122" fill="none" stroke="#0284c7" stroke-width="2" stroke-dasharray="4"/>
+      </svg>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div><span>Target CPU Utilization (%)</span></div>
+      <div class="legend-item"><div class="legend-color" style="background: #0284c7;"></div><span>Packets Per Second (PPS)</span></div>
+    </div>
+
+    <h2>2. Key Observations Across the Timeline</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>Spike Phase: Immediate Kernel Starvation</h4>
+        <p>Unlike memory leaks which take hours, packet floods exhaust CPU within 2 to 3 seconds of execution as interrupts overwhelm CPU scheduling queues.</p>
+      </div>
+      <div class="info-card">
+        <h4>Recovery Phase: Kernel Drop Restores CPU</h4>
+        <p>The moment iptables rules are active, packets are dropped at Layer 3 inside Netfilter. CPU returns to healthy baseline almost instantaneously.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 5 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 6 ==================== -->
+  <div class="page" id="page-6">
+    <div class="page-header">
+      <span>Attack Detection & Investigation Decision Tree</span>
+      <span>Chapter 6</span>
+    </div>
+
+    <h2>1. Incident Response Traffic Spike Decision Tree</h2>
+    <div class="svg-box">
+      <svg width="480" height="160" viewBox="0 0 480 160">
+        <!-- Start Node -->
+        <rect x="180" y="5" width="120" height="30" rx="4" fill="#0f172a" stroke="#0284c7"/>
+        <text x="240" y="24" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#fff" text-anchor="middle">Traffic Spike Alert</text>
+
+        <!-- Branch 1 -->
+        <line x1="240" y1="35" x2="240" y2="50" stroke="#64748b" stroke-width="1.5"/>
+
+        <!-- Decision 1 -->
+        <polygon points="240,50 310,75 240,100 170,75" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="240" y="78" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#78350f" text-anchor="middle">Protocol Check?</text>
+
+        <!-- Path ICMP/Raw -->
+        <line x1="170" y1="75" x2="80" y2="75" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="125" y="70" font-family="sans-serif" font-size="7" fill="#b91c1c" text-anchor="middle">ICMP / UDP</text>
+
+        <rect x="15" y="60" width="65" height="30" rx="4" fill="#fee2e2" stroke="#ef4444"/>
+        <text x="47" y="78" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#991b1b" text-anchor="middle">Volumetric</text>
+
+        <line x1="47" y1="90" x2="47" y2="120" stroke="#ef4444" stroke-width="1.5"/>
+        <rect x="5" y="120" width="85" height="30" rx="4" fill="#ef4444"/>
+        <text x="47" y="138" font-family="sans-serif" font-size="7" font-weight="bold" fill="#fff" text-anchor="middle">Apply Rate Limit</text>
+
+        <!-- Path HTTP -->
+        <line x1="310" y1="75" x2="390" y2="75" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="350" y="70" font-family="sans-serif" font-size="7" fill="#0369a1" text-anchor="middle">HTTP / Web</text>
+
+        <polygon points="390,75 440,95 390,115 340,95" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+        <text x="390" y="98" font-family="sans-serif" font-size="6.5" font-weight="bold" fill="#14532d" text-anchor="middle">IP Diversity?</text>
+
+        <!-- Sub paths -->
+        <line x1="440" y1="95" x2="465" y2="95" stroke="#16a34a" stroke-width="1.5"/>
+        <line x1="465" y1="95" x2="465" y2="125" stroke="#16a34a" stroke-width="1.5"/>
+        <rect x="420" y="125" width="55" height="28" rx="4" fill="#16a34a"/>
+        <text x="447" y="142" font-family="sans-serif" font-size="6.5" font-weight="bold" fill="#fff" text-anchor="middle">Flash Crowd</text>
+
+        <line x1="340" y1="95" x2="270" y2="95" stroke="#ef4444" stroke-width="1.5"/>
+        <line x1="270" y1="95" x2="270" y2="125" stroke="#ef4444" stroke-width="1.5"/>
+        <rect x="230" y="125" width="80" height="28" rx="4" fill="#dc2626"/>
+        <text x="270" y="142" font-family="sans-serif" font-size="6.5" font-weight="bold" fill="#fff" text-anchor="middle">HTTP L7 Flood</text>
+      </svg>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>Investigating Packet Headers</h4>
+        <p>Examine whether packets are carrying valid TCP sequence numbers or if they share identical forged payload signatures.</p>
+      </div>
+      <div class="info-card">
+        <h4>Distinguishing Humans from Bots</h4>
+        <p>Bots fail basic browser JavaScript challenges (e.g., Cloudflare Under Attack mode) and repeat identical URIs thousands of times per minute.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 6 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 7 ==================== -->
+  <div class="page" id="page-7">
+    <div class="page-header">
+      <span>Mitigation Decision Tree & Layered Defenses</span>
+      <span>Chapter 7</span>
+    </div>
+
+    <h2>1. Hierarchical Defense Architecture</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Layer 1: Cloud -->
+        <rect x="10" y="10" width="460" height="30" rx="4" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="25" y="30" font-family="sans-serif" font-size="9" font-weight="bold" fill="#1e40af">LAYER 1: Cloud Anycast Scrubbing</text>
+        <text x="320" y="30" font-family="sans-serif" font-size="8" fill="#2563eb">Absorbs 500+ Gbps volumetric floods</text>
+
+        <!-- Layer 2: Edge Firewall -->
+        <rect x="30" y="50" width="420" height="30" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+        <text x="45" y="70" font-family="sans-serif" font-size="9" font-weight="bold" fill="#92400e">LAYER 2: Border Network Firewall</text>
+        <text x="310" y="70" font-family="sans-serif" font-size="8" fill="#b45309">Blocks unauthorized ports & protocols</text>
+
+        <!-- Layer 3: Host Rate Limit -->
+        <rect x="50" y="90" width="380" height="30" rx="4" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="65" y="110" font-family="sans-serif" font-size="9" font-weight="bold" fill="#065f46">LAYER 3: Host iptables Rate Limiting</text>
+        <text x="290" y="110" font-family="sans-serif" font-size="8" fill="#047857">Limits ICMP to 1/s burst 5</text>
+
+        <!-- Layer 4: Application Reverse Proxy -->
+        <rect x="70" y="125" width="340" height="22" rx="4" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+        <text x="85" y="140" font-family="sans-serif" font-size="8" font-weight="bold" fill="#334155">LAYER 4: Reverse Proxy & Caching (Nginx)</text>
+      </svg>
+    </div>
+
+    <h2>2. When to Use Which Mitigation Technique</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>When Local iptables is Sufficient</h4>
+        <p>When attacks are low-to-moderate volume (e.g. single-source DoS in our lab) and network bandwidth is not completely saturated.</p>
+      </div>
+      <div class="info-card">
+        <h4>When Cloud Scrubbing is Mandatory</h4>
+        <p>When the volume of attack traffic exceeds the physical bandwidth of the host's network cable (e.g. 50 Gbps flood targeting a 1 Gbps port).</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 7 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 8 ==================== -->
+  <div class="page" id="page-8">
+    <div class="page-header">
+      <span>Secure Lab Architecture Diagram</span>
+      <span>Chapter 8</span>
+    </div>
+
+    <h2>1. Isolated Docker Container Network Topology</h2>
+    <div class="svg-box">
+      <svg width="480" height="170" viewBox="0 0 480 170">
+        <!-- Host Boundary -->
+        <rect x="5" y="5" width="470" height="160" rx="8" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="4"/>
+        <text x="20" y="22" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#64748b">HOST COMPUTER (Safe Isolation Sandbox)</text>
+
+        <!-- Docker Network Box -->
+        <rect x="20" y="32" width="440" height="120" rx="6" fill="#fff" stroke="#0284c7" stroke-width="1.5"/>
+        <text x="35" y="48" font-family="sans-serif" font-size="8" font-weight="bold" fill="#0369a1">Bridge Network: com.vlab.managed=true</text>
+
+        <!-- Attacker Container -->
+        <rect x="35" y="60" width="115" height="75" rx="6" fill="#fee2e2" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="92" y="80" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#991b1b" text-anchor="middle">icmp-attacker</text>
+        <text x="92" y="95" font-family="sans-serif" font-size="7" fill="#b91c1c" text-anchor="middle">Alpine Linux + hping3</text>
+        <text x="92" y="110" font-family="sans-serif" font-size="6.5" fill="#7f1d1d" text-anchor="middle">CPU Limit: 0.5 Cores</text>
+
+        <!-- Packet Arrow -->
+        <line x1="155" y1="95" x2="225" y2="95" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="190" y="88" font-family="sans-serif" font-size="7" font-weight="bold" fill="#ef4444" text-anchor="middle">hping3 flood</text>
+
+        <!-- Target Container -->
+        <rect x="230" y="60" width="115" height="75" rx="6" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5"/>
+        <text x="287" y="80" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#065f46" text-anchor="middle">icmp-target</text>
+        <text x="287" y="95" font-family="sans-serif" font-size="7" fill="#047857" text-anchor="middle">iptables rate-limit</text>
+        <text x="287" y="110" font-family="sans-serif" font-size="6.5" fill="#064e3b" text-anchor="middle">CPU Limit: 0.3 Cores</text>
+
+        <!-- Telemetry Collector -->
+        <rect x="360" y="60" width="85" height="75" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+        <text x="402" y="82" font-family="sans-serif" font-size="8" font-weight="bold" fill="#334155" text-anchor="middle">Lab Manager</text>
+        <text x="402" y="98" font-family="sans-serif" font-size="6.5" fill="#64748b" text-anchor="middle">Telemetry Engine</text>
+        <text x="402" y="112" font-family="sans-serif" font-size="6.5" fill="#64748b" text-anchor="middle">/proc/net/snmp</text>
+      </svg>
+    </div>
+
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>Isolated Virtual Bridge</h4>
+        <p>No attack packets can leak onto your physical home WiFi or reach internet destinations. Traffic is confined to the Docker bridge.</p>
+      </div>
+      <div class="info-card">
+        <h4>Resource Throttling</h4>
+        <p>Both containers are capped with CPU and memory limits, ensuring your computer stays completely smooth and responsive during tests.</p>
+      </div>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 8 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 9 ==================== -->
+  <div class="page" id="page-9">
+    <div class="page-header">
+      <span>Before and After Mitigation Visual Metrics</span>
+      <span>Chapter 9</span>
+    </div>
+
+    <h2>1. Side-by-Side Dashboard Telemetry Comparison</h2>
+    <div class="card-grid" style="grid-template-columns: 1fr 1fr; gap: 10px;">
+      <!-- Card Before -->
+      <div style="background: #fff5f5; border: 2px solid #ef4444; border-radius: 8px; padding: 10px;">
+        <h4 style="color: #991b1b; font-size: 10pt; margin-bottom: 6px;">DURING FLOOD (UNPROTECTED)</h4>
+        <div style="font-family: monospace; font-size: 8.5pt; line-height: 1.6; color: #7f1d1d;">
+          STATUS: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CRITICAL (DoS)<br>
+          PACKET RATE: 35,210 PPS<br>
+          CPU USAGE: &nbsp;&nbsp;28.4% (Max Capped)<br>
+          RAM USAGE: &nbsp;&nbsp;24.2 MB<br>
+          USER PING: &nbsp;&nbsp;Request Timed Out ❌
+        </div>
+        <div style="background: #fee2e2; padding: 6px; border-radius: 4px; margin-top: 8px; font-size: 7.5pt; color: #991b1b;">
+          <strong>Impact:</strong> Target is choked answering Echo Requests. Legitimate users receive 100% packet loss.
+        </div>
+      </div>
+
+      <!-- Card After -->
+      <div style="background: #f0fdf4; border: 2px solid #10b981; border-radius: 8px; padding: 10px;">
+        <h4 style="color: #065f46; font-size: 10pt; margin-bottom: 6px;">AFTER MITIGATION (PROTECTED)</h4>
+        <div style="font-family: monospace; font-size: 8.5pt; line-height: 1.6; color: #064e3b;">
+          STATUS: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEALTHY<br>
+          PACKET RATE: 1 to 3 PPS<br>
+          CPU USAGE: &nbsp;&nbsp;3.2% (Baseline Idle)<br>
+          RAM USAGE: &nbsp;&nbsp;18.5 MB<br>
+          USER PING: &nbsp;&nbsp;Reply in 2ms ✅
+        </div>
+        <div style="background: #dcfce7; padding: 6px; border-radius: 4px; margin-top: 8px; font-size: 7.5pt; color: #166534;">
+          <strong>Resolution:</strong> iptables rate-limits ICMP to 1/s burst 5. 99.9% of junk is discarded at Layer 3!
+        </div>
+      </div>
+    </div>
+
+    <h2>2. Visual Bar Metric Comparison</h2>
+    <div class="svg-box">
+      <svg width="480" height="110" viewBox="0 0 480 110">
+        <!-- CPU Bars -->
+        <text x="20" y="30" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#334155">Target CPU %</text>
+        <rect x="110" y="18" width="300" height="16" fill="#fee2e2" rx="3"/>
+        <rect x="110" y="18" width="280" height="16" fill="#ef4444" rx="3"/>
+        <text x="400" y="30" font-family="sans-serif" font-size="8" font-weight="bold" fill="#991b1b">28.4% (Flood)</text>
+
+        <rect x="110" y="38" width="300" height="16" fill="#dcfce7" rx="3"/>
+        <rect x="110" y="38" width="35" height="16" fill="#10b981" rx="3"/>
+        <text x="155" y="50" font-family="sans-serif" font-size="8" font-weight="bold" fill="#065f46">3.2% (Mitigated)</text>
+
+        <!-- PPS Bars -->
+        <text x="20" y="80" font-family="sans-serif" font-size="8.5" font-weight="bold" fill="#334155">Packet Intake</text>
+        <rect x="110" y="68" width="300" height="16" fill="#fee2e2" rx="3"/>
+        <rect x="110" y="68" width="290" height="16" fill="#ef4444" rx="3"/>
+        <text x="410" y="80" font-family="sans-serif" font-size="8" font-weight="bold" fill="#991b1b">35k PPS</text>
+
+        <rect x="110" y="88" width="300" height="16" fill="#dcfce7" rx="3"/>
+        <rect x="110" y="88" width="10" height="16" fill="#10b981" rx="3"/>
+        <text x="130" y="100" font-family="sans-serif" font-size="8" font-weight="bold" fill="#065f46">~2 PPS (Mitigated)</text>
+      </svg>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 9 of 10</span>
+    </div>
+  </div>
+
+  <!-- ==================== PAGE 10 ==================== -->
+  <div class="page" id="page-10">
+    <div class="page-header">
+      <span>Concept Map & Visual Memory Cues</span>
+      <span>Chapter 10</span>
+    </div>
+
+    <h2>1. Comprehensive Mind Map: Flood Attack Knowledge Base</h2>
+    <div class="svg-box">
+      <svg width="480" height="150" viewBox="0 0 480 150">
+        <!-- Center Root -->
+        <rect x="190" y="55" width="100" height="40" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+        <text x="240" y="78" font-family="sans-serif" font-size="9" font-weight="bold" fill="#38bdf8" text-anchor="middle">FLOOD ATTACK</text>
+
+        <!-- Branch 1: Availability -->
+        <line x1="240" y1="55" x2="100" y2="25" stroke="#64748b" stroke-width="1.5"/>
+        <rect x="40" y="10" width="115" height="28" rx="4" fill="#fee2e2" stroke="#ef4444"/>
+        <text x="97" y="27" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#991b1b" text-anchor="middle">Targets: Availability</text>
+
+        <!-- Branch 2: Vectors -->
+        <line x1="290" y1="65" x2="380" y2="25" stroke="#64748b" stroke-width="1.5"/>
+        <rect x="330" y="10" width="120" height="28" rx="4" fill="#fef3c7" stroke="#d97706"/>
+        <text x="390" y="27" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#92400e" text-anchor="middle">Vectors: ICMP, SYN, UDP</text>
+
+        <!-- Branch 3: Defenses -->
+        <line x1="240" y1="95" x2="100" y2="125" stroke="#64748b" stroke-width="1.5"/>
+        <rect x="40" y="112" width="115" height="28" rx="4" fill="#ecfdf5" stroke="#10b981"/>
+        <text x="97" y="129" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#065f46" text-anchor="middle">Defenses: iptables, Scrubbing</text>
+
+        <!-- Branch 4: Telemetry -->
+        <line x1="290" y1="85" x2="380" y2="125" stroke="#64748b" stroke-width="1.5"/>
+        <rect x="330" y="112" width="120" height="28" rx="4" fill="#eff6ff" stroke="#3b82f6"/>
+        <text x="390" y="129" font-family="sans-serif" font-size="7.5" font-weight="bold" fill="#1e40af" text-anchor="middle">Metrics: PPS, CPU %, Latency</text>
+      </svg>
+    </div>
+
+    <h2>2. Five Quick Visual Memory Cues for Exams</h2>
+    <div class="card-grid">
+      <div class="info-card">
+        <h4>1. The Doorbell (ICMP)</h4>
+        <p>A flood attack is like ringing a doorbell thousands of times so the staff cannot help real visitors.</p>
+      </div>
+      <div class="info-card">
+        <h4>2. The Bouncer (Firewall)</h4>
+        <p>A firewall stops unauthorized packets at the door, but alone cannot stop millions of packets flooding the street.</p>
+      </div>
+      <div class="info-card">
+        <h4>3. The Turnstile (Rate Limiting)</h4>
+        <p>Rate limiting lets 1 person through at a time, keeping the room calm without shutting down the facility.</p>
+      </div>
+      <div class="info-card">
+        <h4>4. The Highway Bypass (Scrubbing)</h4>
+        <p>Upstream scrubbing centers divert massive multi-gigabit traffic away before narrow residential streets choke.</p>
+      </div>
+    </div>
+
+    <div class="info-card" style="border: 2px solid #10b981; background: #ecfdf5; margin-top: 4px;">
+      <h4 style="color: #065f46;">5. The Golden Cybersecurity Rule</h4>
+      <p style="color: #064e3b; font-size: 8.5pt;"><strong>Encryption protects Confidentiality; Defensive Architecture protects Availability.</strong> A complete cybersecurity engineer always protects both!</p>
+    </div>
+
+    <div class="page-footer">
+      <span>Flood Attack Charts & Diagrams</span>
+      <span>Page 10 of 10</span>
+    </div>
+  </div>
+
+</body>
+</html>

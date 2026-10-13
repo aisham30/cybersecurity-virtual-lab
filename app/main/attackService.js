@@ -87,34 +87,53 @@ class AttackService extends EventEmitter {
     });
   }
 
-  async applyMitigation(isSimulated = false) {
+  async applyMitigation(method = 'rate-limiting', isSimulated = false) {
+    this.mitigationMethod = method;
+    const methodNames = {
+      'rate-limiting': 'iptables ICMP Rate Limiting (limit 1/s, burst 5)',
+      'firewall': 'Firewall Filtering (iptables DROP echo-request)',
+      'monitoring': 'Traffic Anomaly Monitoring (Baseline Alerting)',
+      'scrubbing': 'Network-Level Upstream DDoS Scrubbing (Cloud Filter)',
+      'capacity': 'Capacity & Load Management (Multi-Instance Balancing)',
+    };
+    const readable = methodNames[method] || methodNames['rate-limiting'];
+
     if (this.logs) {
-      this.logs.add('icmp-flood', 'info', 'target', '🛡️ Applying iptables ICMP rate-limit mitigation rules…');
+      this.logs.add('icmp-flood', 'info', 'target', `🛡️ Applying defense: ${readable}…`);
     }
 
     if (!isSimulated) {
+      // Flush previous custom rules
       await docker.run(['exec', 'icmp-target', 'iptables', '-F'], { timeoutMs: 3000 }).catch(() => {});
-      await docker.run(
-        ['exec', 'icmp-target', 'iptables', '-A', 'INPUT', '-p', 'icmp', '--icmp-type', 'echo-request', '-m', 'limit', '--limit', '1/s', '--limit-burst', '5', '-j', 'ACCEPT'],
-        { timeoutMs: 3000 }
-      ).catch(() => {});
-      await docker.run(
-        ['exec', 'icmp-target', 'iptables', '-A', 'INPUT', '-p', 'icmp', '--icmp-type', 'echo-request', '-j', 'DROP'],
-        { timeoutMs: 3000 }
-      ).catch(() => {});
+      
+      if (method === 'rate-limiting') {
+        await docker.run(
+          ['exec', 'icmp-target', 'iptables', '-A', 'INPUT', '-p', 'icmp', '--icmp-type', 'echo-request', '-m', 'limit', '--limit', '1/s', '--limit-burst', '5', '-j', 'ACCEPT'],
+          { timeoutMs: 3000 }
+        ).catch(() => {});
+        await docker.run(
+          ['exec', 'icmp-target', 'iptables', '-A', 'INPUT', '-p', 'icmp', '--icmp-type', 'echo-request', '-j', 'DROP'],
+          { timeoutMs: 3000 }
+        ).catch(() => {});
+      } else if (method === 'firewall') {
+        await docker.run(
+          ['exec', 'icmp-target', 'iptables', '-A', 'INPUT', '-p', 'icmp', '--icmp-type', 'echo-request', '-j', 'DROP'],
+          { timeoutMs: 3000 }
+        ).catch(() => {});
+      }
     }
 
     this.mitigationActive = true;
     if (this.logs) {
-      this.logs.add('icmp-flood', 'success', 'target', '✅ Mitigation ACTIVE: iptables ICMP rate-limit rule applied (limit 1/s, burst 5)');
+      this.logs.add('icmp-flood', 'success', 'target', `✅ Defense ACTIVE: ${readable}`);
     }
-    this.emit('mitigationState', { active: true });
-    return { active: true };
+    this.emit('mitigationState', { active: true, method, readable });
+    return { active: true, method, readable };
   }
 
   async removeMitigation(isSimulated = false) {
     if (this.logs) {
-      this.logs.add('icmp-flood', 'info', 'target', 'Removing iptables mitigation rules…');
+      this.logs.add('icmp-flood', 'info', 'target', 'Removing active mitigation defenses…');
     }
 
     if (!isSimulated) {
@@ -122,10 +141,11 @@ class AttackService extends EventEmitter {
     }
 
     this.mitigationActive = false;
+    this.mitigationMethod = null;
     if (this.logs) {
-      this.logs.add('icmp-flood', 'info', 'target', 'Mitigation REMOVED: iptables rules flushed');
+      this.logs.add('icmp-flood', 'info', 'target', 'Mitigation REMOVED: Target server returned to default unprotected state');
     }
-    this.emit('mitigationState', { active: false });
+    this.emit('mitigationState', { active: false, method: null });
     return { active: false };
   }
 

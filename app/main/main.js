@@ -9,6 +9,7 @@ const { MetricsService } = require('./metricsService');
 const { AttackService } = require('./attackService');
 const { TerminalService } = require('./terminalService');
 const { LabManager } = require('./labManager');
+const { PdfService } = require('./pdfService');
 const { setupIPC } = require('./ipc');
 
 let mainWindow = null;
@@ -20,6 +21,7 @@ const logs = new LogService();
 const attack = new AttackService({ logs });
 const metrics = new MetricsService({ attackService: attack });
 const terminals = new TerminalService();
+const pdfService = new PdfService();
 const labManager = new LabManager({
   composeDir,
   logs,
@@ -34,8 +36,8 @@ function createWindow() {
     height: 900,
     minWidth: 1080,
     minHeight: 720,
-    title: 'ICMP Flood — Live Demonstration',
-    backgroundColor: '#f3f4f6',
+    title: 'Flood Attack — Cybersecurity Learning Platform',
+    backgroundColor: '#070b14',
     show: false,
     webPreferences: {
       preload: path.join(__dirname, '../preload/preload.js'),
@@ -63,11 +65,15 @@ app.whenReady().then(async () => {
     metricsService: metrics,
     attackService: attack,
     terminalService: terminals,
+    pdfService,
     getMainWindow: () => mainWindow,
   });
 
   // Startup orphan cleanup
   await labManager.cleanupOrphans().catch(() => {});
+
+  // Pre-generate PDF study guides in background
+  pdfService.ensurePdfsGenerated().catch(() => {});
 
   createWindow();
 

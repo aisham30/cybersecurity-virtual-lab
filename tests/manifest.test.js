@@ -52,7 +52,7 @@ describe('Manifest Loader & Security Analyzer Unit Tests', () => {
     const validRaw = {
       id: 'EXP01',
       name: 'SQL Injection Lab',
-      mode: 'CONTAINER',
+      mode: 'SIMULATION',
       targetUrl: 'http://localhost:3000',
     };
     const valid = validateManifest(validRaw, '/dummy');

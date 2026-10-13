@@ -98,10 +98,33 @@ class MetricsService extends EventEmitter {
         pps = Math.floor(32000 + Math.random() * 15000);
         memMB = 24.5 + Math.random() * 2.0;
       } else {
-        // Rate-Limited Flood
-        cpuPct = 4.5 + Math.random() * 2.5;
-        pps = Math.floor(1 + Math.random() * 4);
-        memMB = 19.8 + Math.random() * 0.8;
+        const method = this.attackService?.mitigationMethod || 'rate-limiting';
+        if (method === 'firewall') {
+          // Packet completely dropped at firewall boundary
+          cpuPct = 1.8 + Math.random() * 1.0;
+          pps = 0;
+          memMB = 18.5 + Math.random() * 0.4;
+        } else if (method === 'scrubbing') {
+          // Upstream cloud scrubber cleans junk traffic
+          cpuPct = 2.0 + Math.random() * 1.2;
+          pps = Math.floor(Math.random() * 2);
+          memMB = 18.6 + Math.random() * 0.4;
+        } else if (method === 'capacity') {
+          // Distributed across multiple load-balanced nodes
+          cpuPct = 8.5 + Math.random() * 2.5;
+          pps = Math.floor(3000 + Math.random() * 1500);
+          memMB = 21.0 + Math.random() * 1.0;
+        } else if (method === 'monitoring') {
+          // Detection only - traffic still hits server
+          cpuPct = 26.0 + Math.random() * 3.5;
+          pps = Math.floor(32000 + Math.random() * 12000);
+          memMB = 24.2 + Math.random() * 1.5;
+        } else {
+          // Rate-Limited Flood (default)
+          cpuPct = 4.2 + Math.random() * 2.0;
+          pps = Math.floor(1 + Math.random() * 4);
+          memMB = 19.8 + Math.random() * 0.8;
+        }
       }
     }
 
