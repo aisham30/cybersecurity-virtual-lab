@@ -15,6 +15,8 @@ const state = {
   mitigationActive: false,
   activeMitigationMethod: null,
   selectedMitigationInModal: 'rate-limiting',
+  theme: 'dark',
+  exploredDefenses: new Set(['rate-limiting']),
 
   // Lab Telemetry (30-second rolling window)
   historyLength: 30,
@@ -110,6 +112,7 @@ window.navigateToView = navigateToView;
    Initialization
    ========================================================================== */
 document.addEventListener('DOMContentLoaded', () => {
+  try { initThemeToggle(); } catch (e) { console.warn('Theme init warning:', e); }
   try { loadStoredProgress(); } catch (e) { console.warn('Progress load warning:', e); }
   try { initRouter(); } catch (e) { console.warn('Router init warning:', e); }
   try { initLiveDemo(); } catch (e) { console.warn('Demo init warning:', e); }
@@ -234,6 +237,45 @@ const sfx = {
 };
 
 /* ==========================================================================
+   Theme Management — Light / Dark Mode System
+   ========================================================================== */
+function initThemeToggle() {
+  const btnToggle = document.getElementById('btn-theme-toggle');
+  const storedTheme = localStorage.getItem('vlab_theme') || (document.body.classList.contains('theme-light') ? 'light' : 'dark');
+  applyTheme(storedTheme);
+
+  if (btnToggle) {
+    btnToggle.addEventListener('click', () => {
+      const isDark = document.body.classList.contains('theme-dark');
+      const nextTheme = isDark ? 'light' : 'dark';
+      applyTheme(nextTheme);
+      if (typeof sfx !== 'undefined' && sfx.play) {
+        try { sfx.play('click'); } catch (_) {}
+      }
+    });
+  }
+}
+
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  state.theme = theme;
+  document.body.classList.toggle('theme-dark', isDark);
+  document.body.classList.toggle('theme-light', !isDark);
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('vlab_theme', theme);
+
+  const iconEl = document.getElementById('theme-toggle-icon');
+  const labelEl = document.getElementById('theme-toggle-label');
+  if (iconEl) iconEl.innerText = isDark ? '🌙' : '☀️';
+  if (labelEl) labelEl.innerText = isDark ? 'DARK' : 'LIGHT';
+
+  // Redraw canvas charts if currently on lab view to match theme gridlines
+  if (typeof drawCanvasCharts === 'function' && state.currentView === 'lab') {
+    setTimeout(drawCanvasCharts, 30);
+  }
+}
+
+/* ==========================================================================
    Router & View Navigation
    ========================================================================== */
 function initRouter() {
@@ -252,16 +294,8 @@ function initRouter() {
     navigateToView('landing');
   });
 
-  // Sound toggle
-  const btnToggleSfx = document.getElementById('btn-toggle-sfx');
-  if (btnToggleSfx) {
-    btnToggleSfx.addEventListener('click', () => {
-      sfx.enabled = !sfx.enabled;
-      btnToggleSfx.innerText = sfx.enabled ? '🔊 SFX: ON' : '🔈 SFX: OFF';
-      btnToggleSfx.classList.toggle('active', sfx.enabled);
-      if (sfx.enabled) sfx.play('click');
-    });
-  }
+  // Theme toggle button
+  initThemeToggle();
 
   // Landing CTAs
   const btnStartLearning = document.getElementById('btn-start-learning');
@@ -608,7 +642,8 @@ function drawSingleChart(canvas, dataSeries, maxVal, lineFillColor, yLabel) {
   ctx.clearRect(0, 0, w, h);
 
   // Background Grid Lines
-  ctx.strokeStyle = '#1e293b';
+  const isDark = document.body.classList.contains('theme-dark') || (typeof state !== 'undefined' && state.theme === 'dark');
+  ctx.strokeStyle = isDark ? '#262938' : '#e2e8f0';
   ctx.lineWidth = 1;
   for (let y = 25; y < h; y += 25) {
     ctx.beginPath();
@@ -698,6 +733,40 @@ function initModals() {
   if (btnCloseFlood) btnCloseFlood.addEventListener('click', closeLaunchFloodModal);
   if (btnCancelFlood) btnCancelFlood.addEventListener('click', closeLaunchFloodModal);
 
+  // Flood Lesson Stepper Navigation
+  const stepperTabs = document.querySelectorAll('.lesson-step-tab');
+  stepperTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const targetId = tab.getAttribute('data-target');
+      switchLessonSection(targetId);
+      if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click');
+    });
+  });
+
+  // "See What Happens ->" Hook CTA button
+  const btnSeeHappens = document.getElementById('btn-flood-see-happens');
+  if (btnSeeHappens) {
+    btnSeeHappens.addEventListener('click', () => {
+      switchLessonSection('flood-sec-flow');
+      setFlowAnimationMode('attack');
+      if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click');
+    });
+  }
+
+  // Interactive Terminology Cards
+  document.querySelectorAll('.term-card').forEach((tc) => {
+    tc.addEventListener('click', () => {
+      tc.classList.toggle('expanded');
+      if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click');
+    });
+    tc.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        tc.classList.toggle('expanded');
+      }
+    });
+  });
+
   if (btnConfirmFlood) {
     btnConfirmFlood.addEventListener('click', async () => {
       closeLaunchFloodModal();
@@ -733,10 +802,8 @@ function initModals() {
   const mitCards = document.querySelectorAll('.mitigation-card');
   mitCards.forEach((card) => {
     card.addEventListener('click', () => {
-      mitCards.forEach((c) => c.classList.remove('selected'));
-      card.classList.add('selected');
-      state.selectedMitigationInModal = card.getAttribute('data-method');
-      renderMitigationDetail(state.selectedMitigationInModal);
+      const method = card.getAttribute('data-method');
+      selectAndExploreMitigation(method);
     });
   });
 
@@ -766,9 +833,109 @@ function initModals() {
   if (btnAckRes) btnAckRes.addEventListener('click', closeResultsSummaryModal);
 }
 
+function switchLessonSection(sectionId) {
+  document.querySelectorAll('.lesson-step-tab').forEach((t) => {
+    t.classList.toggle('active', t.getAttribute('data-target') === sectionId);
+  });
+  document.querySelectorAll('.lesson-section').forEach((sec) => {
+    sec.classList.toggle('active', sec.id === sectionId);
+  });
+  const targetEl = document.getElementById(sectionId);
+  if (targetEl) {
+    targetEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+window.switchLessonSection = switchLessonSection;
+
+function setFlowAnimationMode(mode) {
+  const isAttack = mode === 'attack';
+  const btnAttack = document.getElementById('btn-flow-attack');
+  const btnNormal = document.getElementById('btn-flow-normal');
+  if (btnAttack) btnAttack.classList.toggle('active', isAttack);
+  if (btnNormal) btnNormal.classList.toggle('active', !isAttack);
+
+  const senderBadge = document.getElementById('flow-sender-badge');
+  const senderDesc = document.getElementById('flow-sender-desc');
+  const cpuFill = document.getElementById('flow-cpu-fill');
+  const cpuText = document.getElementById('flow-cpu-text');
+  const serverGlyph = document.getElementById('flow-server-glyph');
+  const serverDesc = document.getElementById('flow-server-desc');
+  const userGlyph = document.getElementById('flow-user-glyph');
+  const userBadge = document.getElementById('flow-user-badge');
+  const userDesc = document.getElementById('flow-user-desc');
+  const streamPings = document.getElementById('flow-stream-pings');
+  const streamUsers = document.getElementById('flow-stream-users');
+  const caption = document.getElementById('flow-diagram-caption');
+
+  if (isAttack) {
+    if (senderBadge) {
+      senderBadge.innerText = 'Rate: 35,000+ PPS';
+      senderBadge.style.background = 'var(--neo-red)';
+      senderBadge.style.color = '#fff';
+    }
+    if (senderDesc) senderDesc.innerText = 'Generates high-frequency ICMP Echo Requests without waiting for replies.';
+    if (cpuFill) {
+      cpuFill.style.width = '95%';
+      cpuFill.style.background = 'var(--neo-red)';
+    }
+    if (cpuText) cpuText.innerText = 'CPU: 95% Locked';
+    if (serverGlyph) {
+      serverGlyph.innerText = '🔥';
+      serverGlyph.classList.add('server-shaking');
+    }
+    if (serverDesc) serverDesc.innerText = 'Network card triggers SoftIRQs; OS CPU locked processing incoming echo buffers.';
+    if (userGlyph) userGlyph.innerText = '⏳';
+    if (userBadge) {
+      userBadge.className = 'flow-status-pill status-dos';
+      userBadge.style.background = 'var(--neo-pink)';
+      userBadge.style.color = '#000';
+      userBadge.innerText = '⛔ DoS: Connection Timed Out';
+    }
+    if (userDesc) userDesc.innerText = 'App requests queue up and time out. Server unable to service new TCP/HTTP sockets.';
+    if (streamPings) streamPings.innerHTML = '<span class="fp-dot fpd-1">●</span><span class="fp-dot fpd-2">●</span><span class="fp-dot fpd-3">●</span>';
+    if (streamUsers) streamUsers.innerHTML = '<span class="fp-dot fpd-u1">✖</span><span class="fp-dot fpd-u2">✖</span>';
+    if (caption) caption.innerHTML = '<strong>Simulated Attack Mechanics:</strong> The attacker bombards the target with Echo Requests. Because the kernel allocates interrupt time for each packet header, high packet rates exhaust CPU capacity even before network bandwidth is saturated.';
+  } else {
+    if (senderBadge) {
+      senderBadge.innerText = 'Rate: 2 PPS (Standard Ping)';
+      senderBadge.style.background = 'var(--neo-lime)';
+      senderBadge.style.color = '#000';
+    }
+    if (senderDesc) senderDesc.innerText = 'Administrator runs standard diagnostics: ping -c 4 target_server';
+    if (cpuFill) {
+      cpuFill.style.width = '4%';
+      cpuFill.style.background = 'var(--neo-lime)';
+    }
+    if (cpuText) cpuText.innerText = 'CPU: 4% (Nominal)';
+    if (serverGlyph) {
+      serverGlyph.innerText = '🖥️';
+      serverGlyph.classList.remove('server-shaking');
+    }
+    if (serverDesc) serverDesc.innerText = 'Server receives echo request, replies immediately with echo reply, CPU load negligible.';
+    if (userGlyph) userGlyph.innerText = '😊';
+    if (userBadge) {
+      userBadge.className = 'flow-status-pill';
+      userBadge.style.background = 'var(--neo-lime)';
+      userBadge.style.color = '#000';
+      userBadge.innerText = '✅ Healthy: HTTP 200 OK (12ms)';
+    }
+    if (userDesc) userDesc.innerText = 'Legitimate web requests are processed smoothly without delays or packet drops.';
+    if (streamPings) streamPings.innerHTML = '<span class="fp-dot fpd-1" style="color: var(--neo-lime);">●</span>';
+    if (streamUsers) streamUsers.innerHTML = '<span class="fp-dot fpd-u1" style="color: var(--neo-lime);">✔</span>';
+    if (caption) caption.innerHTML = '<strong>Normal Operation:</strong> Legitimate diagnostic pings take negligible processing time. The server happily returns Echo Replies while simultaneously serving HTTP web requests.';
+  }
+
+  if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click');
+}
+window.setFlowAnimationMode = setFlowAnimationMode;
+
 function openLaunchFloodModal() {
   const m = document.getElementById('modal-launch-flood');
-  if (m) m.style.display = 'flex';
+  if (m) {
+    m.style.display = 'flex';
+    switchLessonSection('flood-sec-hook');
+    setFlowAnimationMode('attack');
+  }
 }
 
 function closeLaunchFloodModal() {
@@ -780,7 +947,28 @@ function openMitigationModal() {
   const m = document.getElementById('modal-apply-mitigation');
   if (m) {
     m.style.display = 'flex';
-    renderMitigationDetail(state.selectedMitigationInModal || 'rate-limiting');
+
+    // Update active defense shield indicator in modal
+    const shieldName = document.getElementById('modal-defense-shield-name');
+    const shieldState = document.getElementById('modal-defense-shield-state');
+    if (shieldName && shieldState) {
+      if (state.mitigationActive) {
+        shieldName.innerText = `Active (${state.activeMitigationMethod || 'Protected'})`;
+        const dot = shieldState.querySelector('.shield-dot');
+        if (dot) dot.className = 'shield-dot dot-active';
+      } else {
+        shieldName.innerText = 'Exposed (No Filter)';
+        const dot = shieldState.querySelector('.shield-dot');
+        if (dot) dot.className = 'shield-dot dot-unprotected';
+      }
+    }
+
+    const countEl = document.getElementById('defense-explored-count');
+    if (countEl && state.exploredDefenses) {
+      countEl.innerText = `${state.exploredDefenses.size} / 5`;
+    }
+
+    selectAndExploreMitigation(state.selectedMitigationInModal || 'rate-limiting');
   }
 }
 
@@ -789,6 +977,63 @@ function closeMitigationModal() {
   if (m) m.style.display = 'none';
 }
 
+function selectAndExploreMitigation(methodKey) {
+  state.selectedMitigationInModal = methodKey;
+  if (!state.exploredDefenses) state.exploredDefenses = new Set();
+  state.exploredDefenses.add(methodKey);
+
+  // Update counter
+  const countEl = document.getElementById('defense-explored-count');
+  if (countEl) countEl.innerText = `${state.exploredDefenses.size} / 5`;
+
+  // Update card selection state
+  document.querySelectorAll('.mitigation-card').forEach((c) => {
+    c.classList.toggle('selected', c.getAttribute('data-method') === methodKey);
+  });
+
+  renderMitigationDetail(methodKey);
+
+  const panel = document.getElementById('mitigation-detail-panel');
+  if (panel) {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  if (typeof sfx !== 'undefined' && sfx.play) sfx.play('click');
+}
+window.selectAndExploreMitigation = selectAndExploreMitigation;
+
+function copyDefenseCode(codeText, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(codeText).then(() => {
+      if (btn) {
+        const orig = btn.innerText;
+        btn.innerText = '✓ COPIED!';
+        setTimeout(() => { btn.innerText = orig; }, 1800);
+      }
+    }).catch(() => {});
+  }
+}
+window.copyDefenseCode = copyDefenseCode;
+
+function checkPredictAnswer(btn, isCorrect, explanation) {
+  const container = btn.closest('.predict-quiz-box');
+  if (!container) return;
+  container.querySelectorAll('.predict-opt-btn').forEach((b) => {
+    b.disabled = true;
+    b.classList.remove('correct', 'wrong');
+  });
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const feedbackEl = container.querySelector('.predict-feedback');
+  if (feedbackEl) {
+    feedbackEl.style.display = 'block';
+    feedbackEl.innerHTML = `<strong>${isCorrect ? '🎉 Correct!' : '⚠️ Not Quite:'}</strong> ${explanation}`;
+  }
+  if (typeof sfx !== 'undefined' && sfx.play) {
+    sfx.play(isCorrect ? 'success' : 'alarm');
+  }
+}
+window.checkPredictAnswer = checkPredictAnswer;
+
 function renderMitigationDetail(methodKey) {
   const panel = document.getElementById('mitigation-detail-panel');
   if (!panel) return;
@@ -796,70 +1041,224 @@ function renderMitigationDetail(methodKey) {
   const data = {
     'rate-limiting': {
       title: '1. Rate Limiting (iptables Linux Netfilter)',
-      def: 'Restricts the maximum number of requests accepted within a given interval. In our isolated Linux container, iptables allows 1 ping per second with a burst of 5.',
-      analogy: 'A bank receptionist who admits 1 customer through the turnstile every 2 seconds, no matter how many are waiting outside.',
-      example: '`iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s --limit-burst 5 -j ACCEPT`',
-      pros: 'Preserves diagnostic ping functionality for administrators while protecting host CPU from interrupt starvation.',
-      cons: 'If limits are configured too aggressively, legitimate bursts of ping traffic could be dropped during peak hours.',
-      implementation: 'Supported natively via Docker iptables in container.',
+      badge: 'DOCKER ACTIVE',
+      badgeClass: 'badge-success',
+      problem: 'High-frequency ping surges exhaust CPU interrupts (SoftIRQs) even before link capacity is saturated, blocking genuine user connections.',
+      howItWorks: 'The Linux Netfilter kernel subsystem inspects incoming packet headers and admits packets up to a token bucket rate (1 ping per second with a burst of 5). Excess packets are silently dropped without generating replies.',
+      analogy: 'A bank receptionist who admits 1 customer through the turnstile every 2 seconds, no matter how many are waiting outside. The queue cannot storm the counters.',
+      code: 'iptables -A INPUT -p icmp --icmp-type echo-request -m limit --limit 1/s --limit-burst 5 -j ACCEPT\niptables -A INPUT -p icmp --icmp-type echo-request -j DROP',
+      codeFlags: [
+        '<code>-p icmp --icmp-type echo-request</code>: Targets ICMP Type 8 (Echo Requests/Pings) specifically without altering HTTP or TCP traffic.',
+        '<code>-m limit --limit 1/s</code>: Enforces a token bucket ceiling admitting 1 packet per second.',
+        '<code>--limit-burst 5</code>: Accommodates legitimate transient bursts of up to 5 initial pings.',
+        '<code>-j ACCEPT / DROP</code>: Accepts compliant packets, then silently discards overflowing flood packets.'
+      ],
+      pros: 'Preserves diagnostic ping functionality for system administrators while capping CPU utilization below 5%. Zero external services required.',
+      cons: 'If rate limits are configured too aggressively, legitimate multi-admin monitoring or diagnostic scripts could experience false-positive drops.',
+      before: '35,000+ PPS flood locks container CPU at 95%. Legitimate web users experience 504 Gateway Timeouts.',
+      after: 'Traffic throttled to 1 PPS. CPU stabilizes at &lt;5%, and HTTP 200 responses return to normal within milliseconds.',
+      predictQuestion: 'What happens if a network administrator runs "ping -c 4 target_server" with rate limiting active?',
+      predictOptions: [
+        { text: 'A) The first 4 pings reply normally within milliseconds due to the burst allowance.', isCorrect: true },
+        { text: 'B) The server completely drops all network connections including SSH.', isCorrect: false },
+        { text: 'C) The server crashes because rate limiting only works on TCP packets.', isCorrect: false }
+      ],
+      predictExplanation: 'Because the rule includes <code>--limit-burst 5</code>, a standard 4-packet diagnostic ping passes immediately without being throttled!'
     },
     'firewall': {
       title: '2. Firewall Filtering (Total Protocol Drop)',
-      def: 'Evaluates packet headers and immediately drops matching packet types. In our container, iptables discards all ICMP Echo Requests without processing.',
-      analogy: 'A security bouncer who turns away anyone without an invitation card right at the front gate.',
-      example: '`iptables -A INPUT -p icmp --icmp-type echo-request -j DROP`',
-      pros: 'Zero CPU time spent on constructing Echo Replies. Drops packets with minimal kernel overhead.',
-      cons: 'Completely eliminates ping functionality. Legitimate network reachability checks will fail.',
-      implementation: 'Supported natively via Docker iptables in container.',
+      badge: 'DOCKER ACTIVE',
+      badgeClass: 'badge-success',
+      problem: 'Processing every ICMP Echo Request consumes kernel memory and forces the CPU to generate an Echo Reply, wasting precious resources during a flood.',
+      howItWorks: 'Evaluates packet headers at early kernel ingress and immediately discards matching ICMP Echo Requests before socket buffers or user-space processes are allocated.',
+      analogy: 'A security bouncer who turns away anyone without an invitation card right at the front gate, not allowing them to step foot in the lobby.',
+      code: 'iptables -A INPUT -p icmp --icmp-type echo-request -j DROP',
+      codeFlags: [
+        '<code>-A INPUT</code>: Appends the rule to the kernel incoming packet chain.',
+        '<code>-p icmp --icmp-type echo-request</code>: Matches ping requests directly.',
+        '<code>-j DROP</code>: Silently discards the packet without sending an ICMP Destination Unreachable response, saving outgoing bandwidth.'
+      ],
+      pros: 'Maximum possible CPU efficiency. Zero CPU cycles wasted creating replies, and zero outgoing network bandwidth consumed.',
+      cons: 'Completely disables ping reachability testing. Legitimate administrators cannot test whether the server is alive via ping.',
+      before: 'Continuous CPU thrashing servicing incoming Echo Requests; server becomes unresponsive to application traffic.',
+      after: 'Packets dropped instantaneously at kernel boundary. CPU drops to 0%, completely neutralizing ping flood attacks.',
+      predictQuestion: 'Why is "-j DROP" preferred over "-j REJECT" when mitigating a volumetric flood?',
+      predictOptions: [
+        { text: 'A) DROP discards silently; REJECT sends an ICMP error packet back, doubling bandwidth and CPU work.', isCorrect: true },
+        { text: 'B) DROP encrypts the sender\'s hard drive.', isCorrect: false },
+        { text: 'C) REJECT requires root permissions but DROP does not.', isCorrect: false }
+      ],
+      predictExplanation: 'Sending "Port Unreachable" or "Host Unreachable" ICMP responses for 35,000 PPS would cause the defender to flood their own network uplink!'
     },
     'monitoring': {
       title: '3. Traffic Anomaly Monitoring & Automated Alerts',
-      def: 'Observes PPS, CPU, and connection rates in real-time, triggering alarms when traffic rises significantly above established baselines.',
-      analogy: 'A shopkeeper hearing loud shouting outside and pressing a silent alarm before the shop is overwhelmed.',
-      example: 'Trigger an alert if ICMP PPS exceeds 5,000 for more than 3 consecutive seconds.',
-      pros: 'Non-intrusive: zero chance of blocking legitimate users. Provides early warning of attack onset.',
-      cons: 'Detection alone does not stop packets; it must be connected to an automated response mechanism.',
-      implementation: 'Simulated educational telemetry demonstration.',
+      badge: 'SIMULATED',
+      badgeClass: 'badge-accent',
+      problem: 'Attacks often ramp up in fractions of a second. Without real-time telemetry, sysadmins only discover outages after users complain.',
+      howItWorks: 'Monitors incoming PPS, bandwidth rate, and CPU metrics in real time. When packet arrival exceeds baseline thresholds, automated webhooks or alarms notify security engineers.',
+      analogy: 'A shopkeeper hearing loud shouting outside and pressing a silent alarm button before the storefront is stormed.',
+      code: '# Prometheus / Telegraf Alert Rule\nALERT HighICMPVolume\n  IF rate(node_net_packets_total{proto="icmp"}[10s]) > 5000\n  FOR 3s\n  LABELS { severity = "page" }\n  ANNOTATIONS { summary = "Volumetric ICMP surge detected" }',
+      codeFlags: [
+        '<code>rate(...[10s])</code>: Measures packet arrival rate derivative over rolling 10-second window.',
+        '<code>> 5000</code>: Threshold exceeding normal operating baseline by orders of magnitude.',
+        '<code>FOR 3s</code>: Debounce protection ensuring brief network bursts don\'t trigger false alarms.'
+      ],
+      pros: 'Non-intrusive: zero chance of accidentally blocking legitimate users or breaking diagnostic workflows.',
+      cons: 'Observation alone does not stop packets; it must be coupled with an automated response mechanism or firewall trigger.',
+      before: 'Stealth volumetric surges cause unexplained application slowness; origin teams spend hours diagnosing.',
+      after: 'Immediate alarm dispatched within 3 seconds of flood onset, allowing automated playbooks to activate shields.',
+      predictQuestion: 'What is the primary limitation of traffic monitoring on its own?',
+      predictOptions: [
+        { text: 'A) It alerts you that an attack is occurring, but cannot block or drop packets by itself.', isCorrect: true },
+        { text: 'B) It causes the server to consume twice as much network bandwidth.', isCorrect: false },
+        { text: 'C) It can only monitor HTTP traffic, not ICMP.', isCorrect: false }
+      ],
+      predictExplanation: 'Monitoring provides visibility, but a defender must still apply an active firewall rule or routing change to filter malicious packets.'
     },
     'scrubbing': {
       title: '4. Network-Level Upstream Cloud DDoS Scrubbing',
-      def: 'Routes public internet traffic through upstream cloud scrubbing centers (e.g. Cloudflare, AWS Shield) that filter malicious junk before it hits the origin server.',
-      analogy: 'A highway bypass diverting heavy freight transport trucks away from narrow residential streets.',
-      example: 'BGP Anycast routing traffic through global cloud cleaning centers.',
-      pros: 'Can absorb massive multi-Terabit volumetric floods that would saturate the physical internet cable.',
-      cons: 'Requires external cloud infrastructure and subscription; adds slight routing latency.',
-      implementation: 'Simulated educational telemetry demonstration.',
+      badge: 'SIMULATED',
+      badgeClass: 'badge-accent',
+      problem: 'Massive volumetric DDoS attacks (100 Gbps - 1+ Tbps) physically saturate the data center ISP uplink cable before packets even reach the server firewall.',
+      howItWorks: 'BGP Anycast routes public internet traffic through globally distributed cloud scrubbing centers (e.g., Cloudflare, AWS Shield) where high-capacity hardware cleans traffic and tunnels clean packets to origin.',
+      analogy: 'A highway bypass diverting heavy freight transport trucks away from narrow residential streets into an inspection weigh station.',
+      code: '# Upstream Anycast BGP Announcement & GRE Tunnel\n# Public IP routed via Scrubbing Center: 198.51.100.1\nip tunnel add gre-clean mode gre remote 203.0.113.5 local 10.0.0.1\nip link set gre-clean up',
+      codeFlags: [
+        '<code>BGP Anycast</code>: Distributes single IP across 300+ global scrubbing points of presence.',
+        '<code>mode gre</code>: Encapsulates filtered traffic so origin server receives only verified packets.'
+      ],
+      pros: 'Can absorb massive multi-Terabit volumetric floods that would incinerate local infrastructure. Protects against link saturation.',
+      cons: 'Requires commercial cloud subscription; introduces slight 2-10ms network latency due to rerouting.',
+      before: 'ISP uplink cable 100% saturated with junk packets; all traffic (including legitimate users) completely blocked.',
+      after: 'Cloud scrubbing center absorbs 99.99% of flood traffic; only legitimate requests reach the origin server.',
+      predictQuestion: 'Why is a local iptables firewall insufficient against a 50 Gbps flood if your internet connection is 1 Gbps?',
+      predictOptions: [
+        { text: 'A) The physical ISP cable saturates before packets can reach iptables, dropping everything upstream.', isCorrect: true },
+        { text: 'B) iptables cannot process more than 10 packets per minute.', isCorrect: false },
+        { text: 'C) Linux does not support gigabit network cards.', isCorrect: false }
+      ],
+      predictExplanation: 'If the incoming flood exceeds the bandwidth of the physical connection into the building, the ISP drops packets before your server can even inspect them!'
     },
     'capacity': {
       title: '5. Capacity & Load Management (Load Balancing)',
-      def: 'Uses horizontal server scaling, caching, and load balancers (e.g. Nginx, ALB) to distribute incoming traffic across multiple worker nodes.',
-      analogy: 'Opening 5 additional checkout counters at a supermarket when the queue grows long.',
-      example: 'Reverse proxy distributing requests across 4 load-balanced backend containers.',
-      pros: 'Smooths out legitimate traffic surges (e.g., ticket sales or exam results) effortlessly.',
-      cons: 'Expensive; cannot withstand infinite botnet flood volumes without upstream filtering.',
-      implementation: 'Simulated educational telemetry demonstration.',
-    },
+      badge: 'SIMULATED',
+      badgeClass: 'badge-accent',
+      problem: 'A single server instance has finite CPU cores and network queues. When traffic surges, single points of failure quickly collapse.',
+      howItWorks: 'Uses horizontal autoscaling and reverse-proxy load balancers (e.g. Nginx, HAProxy, AWS ALB) to distribute incoming connections across multiple backend containers.',
+      analogy: 'Opening 5 additional checkout counters at a supermarket when the queue stretches all the way into the aisles.',
+      code: '# Nginx High-Availability Upstream Pool\nupstream app_cluster {\n  least_conn;\n  server 10.0.1.10:80 max_fails=3 fail_timeout=10s;\n  server 10.0.1.11:80 max_fails=3 fail_timeout=10s;\n  server 10.0.1.12:80 max_fails=3 fail_timeout=10s;\n}',
+      codeFlags: [
+        '<code>least_conn</code>: Distributes new requests to the server node with fewest active connections.',
+        '<code>max_fails=3</code>: Automatically removes unhealthy or struggling nodes from the active pool.'
+      ],
+      pros: 'Absorbs legitimate traffic surges (concert sales, exam results) effortlessly. Eliminates single point of failure.',
+      cons: 'Expensive to run; cannot withstand infinite botnet flood volumes without an accompanying upstream packet filter.',
+      before: 'Single server instance hits 100% CPU lockup; all web and API requests fail with 500/503 errors.',
+      after: 'Workload balanced across cluster; each node operates under 30% CPU with smooth failover redundancy.',
+      predictQuestion: 'Can horizontal capacity scaling alone solve all DDoS attacks?',
+      predictOptions: [
+        { text: 'A) No, botnet attackers can scale traffic volume much cheaper and faster than defenders can add servers.', isCorrect: true },
+        { text: 'B) Yes, adding more servers makes attacks mathematically impossible.', isCorrect: false },
+        { text: 'C) Yes, load balancers automatically delete all incoming packets.', isCorrect: false }
+      ],
+      predictExplanation: 'Attackers can spin up tens of thousands of compromised devices at zero cost, making pure server scaling financially and technically unsustainable without packet filtering.'
+    }
   };
 
   const item = data[methodKey] || data['rate-limiting'];
+  const codeEscaped = item.code.replace(/'/g, "\\'").replace(/\n/g, '\\n');
+
   panel.innerHTML = `
-    <div class="mit-detail-header" style="margin-bottom: 0.75rem;">
-      <h4 style="color: #ffffff; font-size: 0.95rem; font-weight: 800;">${item.title}</h4>
-      <span class="badge ${item.implementation.includes('Docker') ? 'badge-success' : 'badge-accent'}" style="margin-top: 0.2rem;">${item.implementation}</span>
+    <div class="mit-panel-title-row">
+      <div>
+        <h3>${item.title}</h3>
+        <span class="badge ${item.badgeClass}" style="margin-top: 4px; display: inline-block;">${item.badge}</span>
+      </div>
+      <button type="button" class="btn btn-defense btn-sm" onclick="closeMitigationModal(); window.vlab && window.vlab.applyMitigation('${methodKey}');">
+        ⚡ Apply This Defense Now
+      </button>
     </div>
-    <div class="mit-detail-grid">
-      <div class="mit-detail-box">
-        <h5>Detailed Definition</h5>
-        <p>${item.def}</p>
-        <h5 style="margin-top: 0.5rem;">Relatable Analogy</h5>
-        <p>${item.analogy}</p>
+
+    <!-- 1. The Problem -->
+    <div class="mit-section-card">
+      <h5>1. The Threat / Problem</h5>
+      <p>${item.problem}</p>
+    </div>
+
+    <!-- 2. How the Defense Works -->
+    <div class="mit-section-card">
+      <h5>2. How the Defense Works</h5>
+      <p>${item.howItWorks}</p>
+    </div>
+
+    <!-- 3. Real-Life Analogy -->
+    <div class="mit-section-card" style="background: var(--neo-surface); border-left: 4px solid var(--neo-yellow);">
+      <h5>3. Real-Life Analogy</h5>
+      <p>${item.analogy}</p>
+    </div>
+
+    <!-- 4. Practical Example (Highlighted Code & Copy Button) -->
+    <div class="mit-section-card">
+      <h5>4. Practical Example &amp; Syntax</h5>
+      <div class="code-snippet-box">
+        <button type="button" class="btn-copy-code" onclick="copyDefenseCode('${codeEscaped}', this)">📋 COPY</button>
+        <code>${item.code.replace(/\n/g, '<br>')}</code>
       </div>
-      <div class="mit-detail-box">
-        <h5>Practical Example</h5>
-        <p><code style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--neo-lime);">${item.example}</code></p>
-        <h5 style="margin-top: 0.5rem;">Strengths & Limitations</h5>
-        <p><strong>Pros:</strong> ${item.pros}<br><strong>Cons:</strong> ${item.cons}</p>
+      <div style="margin-top: 0.5rem; font-size: 0.76rem; color: var(--neo-text-dim);">
+        <strong style="color: var(--neo-text);">Option Breakdown:</strong>
+        <ul style="margin: 0.25rem 0 0 1rem; padding: 0;">
+          ${item.codeFlags.map(f => `<li style="margin-bottom: 2px;">${f}</li>`).join('')}
+        </ul>
       </div>
+      <div style="margin-top: 0.5rem; font-size: 0.7rem; color: var(--neo-text-dim); font-family: var(--font-mono);">
+        🔒 <em>Executed bounded inside isolated sandbox container. Never runs on host machine.</em>
+      </div>
+    </div>
+
+    <!-- 5. Strengths & Limitations -->
+    <div class="mit-section-card">
+      <h5>5. Strengths &amp; Limitations</h5>
+      <div class="pros-cons-grid">
+        <div class="pro-box">
+          <strong style="color: var(--neo-green);">✓ Strengths:</strong><br>
+          ${item.pros}
+        </div>
+        <div class="con-box">
+          <strong style="color: var(--neo-red);">⚠️ Limitations:</strong><br>
+          ${item.cons}
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Before & After Defense Comparison -->
+    <div class="mit-section-card">
+      <h5>6. Before &amp; After Defense Comparison</h5>
+      <div class="before-after-comp">
+        <div class="comp-pane without">
+          <strong style="color: var(--neo-red);">❌ Without Defense:</strong><br>
+          ${item.before}
+        </div>
+        <div class="comp-pane with">
+          <strong style="color: var(--neo-green);">🛡️ With Defense:</strong><br>
+          ${item.after}
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Predict the Outcome Knowledge Check -->
+    <div class="predict-quiz-box">
+      <h5 style="margin: 0 0 0.35rem 0; font-family: var(--font-display); font-size: 0.95rem; color: var(--neo-text);">
+        🧠 Quick Knowledge Check: Predict the Outcome
+      </h5>
+      <p style="font-size: 0.8rem; color: var(--neo-text); margin-bottom: 0.5rem;">${item.predictQuestion}</p>
+      <div class="predict-options-row">
+        ${item.predictOptions.map(opt => `
+          <button type="button" class="predict-opt-btn" onclick="checkPredictAnswer(this, ${opt.isCorrect}, '${item.predictExplanation.replace(/'/g, "\\'")}')">
+            ${opt.text}
+          </button>
+        `).join('')}
+      </div>
+      <div class="predict-feedback" style="display: none;"></div>
     </div>
   `;
 }

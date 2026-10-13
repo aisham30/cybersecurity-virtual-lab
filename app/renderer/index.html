@@ -88,10 +88,13 @@
         <button class="nav-tab" data-view="quiz" id="nav-quiz" onclick="navigateToView('quiz')">QUIZ ARENA</button>
       </nav>
 
-      <!-- Compact Progress, Sound & Action CTA -->
+      <!-- Compact Progress, Theme & Action CTA -->
       <div class="header-right">
         <div class="retro-hearts" id="header-hearts" title="Player Lives">♥♥♥</div>
-        <button class="btn-sfx-toggle" id="btn-toggle-sfx" title="Toggle Sound (Muted by default)">🔈 SFX: OFF</button>
+        <button class="btn-theme-toggle" id="btn-theme-toggle" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+          <span class="theme-icon" id="theme-toggle-icon">🌙</span>
+          <span class="theme-label" id="theme-toggle-label">DARK</span>
+        </button>
         <div class="compact-progress-box" title="Overall Progress">
           <span class="compact-prog-label">PROG</span>
           <div class="mini-prog-track">
@@ -138,11 +141,31 @@
               <div class="hub-icon">⚡</div>
               <h2 class="hub-title">Live Demo</h2>
               <p class="hub-desc">Watch a flood attack in real time against an isolated test container.</p>
-              <ul class="hub-features">
-                <li>• High-rate ICMP packet flood</li>
-                <li>• Live CPU &amp; PPS telemetry</li>
-                <li>• iptables defense mitigation</li>
-              </ul>
+
+              <!-- Visual Replacement: Animated Packet Stream & Server Load -->
+              <div class="card-visual-element card-visual-stream" aria-label="Animated packet stream to server illustration">
+                <div class="vstream-track">
+                  <div class="vstream-source" title="Attacker Bot Node">
+                    <span class="vstream-node-glyph">👾</span>
+                    <span class="vstream-badge attacker">ATTACKER</span>
+                  </div>
+                  <div class="vstream-pipeline">
+                    <div class="vstream-pulse-line"></div>
+                    <span class="vstream-packet pkt-1">PING</span>
+                    <span class="vstream-packet pkt-2">PING</span>
+                    <span class="vstream-packet pkt-3">PING</span>
+                  </div>
+                  <div class="vstream-target" title="Target Server Node">
+                    <span class="vstream-node-glyph pulse-server">🖥️</span>
+                    <span class="vstream-badge target">TARGET</span>
+                    <div class="vstream-load-indicator">
+                      <span class="vstream-load-bar" style="width: 88%;"></span>
+                      <span class="vstream-load-text">LOAD 88%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <button class="hub-btn lime" onclick="event.stopPropagation(); navigateToView('lab')">
                 Launch Sandbox &rarr;
               </button>
@@ -157,11 +180,30 @@
               <div class="hub-icon">🌐</div>
               <h2 class="hub-title">Real-Life Scenarios</h2>
               <p class="hub-desc">Explore real-world situations across critical civilian infrastructure.</p>
-              <ul class="hub-features">
-                <li>• Banking, Hospitals, E-Commerce</li>
-                <li>• 8 Interactive Flip Cards</li>
-                <li>• 7-Stage diagnosis mini-games</li>
-              </ul>
+
+              <!-- Visual Replacement: 4 Domain Icons Grid -->
+              <div class="card-visual-element card-visual-domains" aria-label="Domain icons illustration">
+                <div class="vdomain-grid">
+                  <div class="vdomain-cell cell-bank">
+                    <span class="vdomain-emoji">🏦</span>
+                    <span class="vdomain-title">BANKING</span>
+                  </div>
+                  <div class="vdomain-cell cell-hospital">
+                    <span class="vdomain-emoji">🏥</span>
+                    <span class="vdomain-title">HOSPITAL</span>
+                  </div>
+                  <div class="vdomain-cell cell-retail">
+                    <span class="vdomain-emoji">🛒</span>
+                    <span class="vdomain-title">RETAIL</span>
+                  </div>
+                  <div class="vdomain-cell cell-cloud">
+                    <span class="vdomain-emoji">☁️</span>
+                    <span class="vdomain-title">CLOUD</span>
+                  </div>
+                </div>
+                <div class="vdomain-footer-tag">✦ 8 CRITICAL INFRASTRUCTURE CASES</div>
+              </div>
+
               <button class="hub-btn cyan" onclick="event.stopPropagation(); navigateToView('applications')">
                 Play Scenarios &rarr;
               </button>
@@ -176,11 +218,31 @@
               <div class="hub-icon">📖</div>
               <h2 class="hub-title">Notes</h2>
               <p class="hub-desc">Learn the essentials from our comprehensive theory syllabus.</p>
-              <ul class="hub-features">
-                <li>• 25 Exam-focused chapters</li>
-                <li>• ASCII architecture diagrams</li>
-                <li>• 5-minute fast revision mode</li>
-              </ul>
+
+              <!-- Visual Replacement: Illustrated Knowledge Cards Deck -->
+              <div class="card-visual-element card-visual-notes" aria-label="Study notes and knowledge deck illustration">
+                <div class="vnotes-deck-container">
+                  <div class="vnotes-card card-rear">
+                    <span class="vnotes-topic-tag">SHIELD MATRIX</span>
+                  </div>
+                  <div class="vnotes-card card-middle">
+                    <span class="vnotes-topic-tag">RFC 792 ICMP</span>
+                  </div>
+                  <div class="vnotes-card card-front">
+                    <div class="vnotes-header">
+                      <span class="vnotes-book-icon">📖</span>
+                      <span class="vnotes-title-text">CORE THEORY</span>
+                    </div>
+                    <div class="vnotes-schematic-lines">
+                      <span class="vnotes-line long"></span>
+                      <span class="vnotes-line med"></span>
+                      <span class="vnotes-line short"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="vnotes-footer-tag">✦ 5 COMPREHENSIVE PDF GUIDES</div>
+              </div>
+
               <button class="hub-btn yellow" onclick="event.stopPropagation(); navigateToView('notes')">
                 Read Essentials &rarr;
               </button>
@@ -195,11 +257,23 @@
               <div class="hub-icon">🎯</div>
               <h2 class="hub-title">Quiz Arena</h2>
               <p class="hub-desc">Test your defense and packet analysis skills in battle.</p>
-              <ul class="hub-features">
-                <li>• Beginner, Moderate &amp; Demon</li>
-                <li>• Chaotic instant score stamps</li>
-                <li>• Detailed distractor explanations</li>
-              </ul>
+
+              <!-- Visual Replacement: Target Trophy & Arena Badges -->
+              <div class="card-visual-element card-visual-arena" aria-label="Quiz battle arena illustration">
+                <div class="varena-arena-box">
+                  <div class="varena-trophy-display">
+                    <span class="varena-trophy-icon">🏆</span>
+                    <div class="varena-radar-ring"></div>
+                  </div>
+                  <div class="varena-tier-pills-row">
+                    <span class="varena-pill v-easy">EASY</span>
+                    <span class="varena-pill v-mod">MOD</span>
+                    <span class="varena-pill v-demon">DEMON 🔥</span>
+                  </div>
+                </div>
+                <div class="varena-footer-tag">✦ 30 BATTLE QUESTIONS &amp; STAMPS</div>
+              </div>
+
               <button class="hub-btn pink" onclick="event.stopPropagation(); navigateToView('quiz')">
                 Enter Arena &rarr;
               </button>
@@ -524,92 +598,358 @@
     </div><!-- /.viewport-area -->
 
     <!-- =================================================================== -->
-    <!-- EDUCATIONAL PRE-LAUNCH FLOOD MODAL -->
+    <!-- VIEW / MODAL: WHAT IS AN ICMP FLOOD ATTACK? (INTERACTIVE LEARNING LAB) -->
     <!-- =================================================================== -->
     <div id="modal-launch-flood" class="modal-overlay" style="display: none;">
-      <div class="modal-card modal-lg">
+      <div class="modal-card modal-lg flood-lesson-card">
         <div class="modal-header">
           <div class="modal-title-group">
             <span class="modal-icon">⚡</span>
-            <h2>What Is an ICMP Flood?</h2>
+            <div>
+              <h2 style="margin: 0; line-height: 1;">Understanding ICMP Flood Attacks</h2>
+              <span class="modal-sub-badge">INTERACTIVE CYBERSECURITY LESSON &amp; SIMULATION GUIDE</span>
+            </div>
           </div>
-          <button class="btn-modal-close" id="btn-close-flood-modal">&times;</button>
+          <button class="btn-modal-close" id="btn-close-flood-modal" title="Close Guide">&times;</button>
         </div>
 
-        <div class="modal-body">
-          <div class="analogy-banner">
-            <span class="analogy-badge">🛎️ SIMPLE ANALOGY</span>
-            <p>
-              <strong>The College Office Doorbell:</strong> Imagine repeatedly ringing a college office's doorbell hundreds of times every minute.
-              The staff becomes occupied answering the door, so genuine students waiting outside struggle to receive help.
-            </p>
-          </div>
-
-          <div class="modal-text-block">
-            <h3>Simple Definition</h3>
-            <p>
-              An <strong>ICMP Flood</strong> is a denial-of-service attack where a target receives excessive ICMP Echo Requests (pings),
-              consuming processing capacity and disrupting legitimate traffic.
-            </p>
-          </div>
-
-          <div class="modal-concepts-grid">
-            <div class="modal-concept-item">
-              <strong>ICMP</strong>
-              <span>Diagnostic error reporting protocol.</span>
-            </div>
-            <div class="modal-concept-item">
-              <strong>Echo Request</strong>
-              <span>Ping diagnostic: "Are you alive?"</span>
-            </div>
-            <div class="modal-concept-item">
-              <strong>Echo Reply</strong>
-              <span>Target response: "Yes, I am here."</span>
-            </div>
-            <div class="modal-concept-item">
-              <strong>PPS (Rate)</strong>
-              <span>Packets Per Second: triggers CPU interrupts.</span>
-            </div>
-            <div class="modal-concept-item">
-              <strong>CPU Usage</strong>
-              <span>Processor capacity spent handling pings.</span>
-            </div>
-            <div class="modal-concept-item">
-              <strong>Denial of Service</strong>
-              <span>Making a system unreachable for users.</span>
-            </div>
-          </div>
-
-          <div class="modal-diagram-box">
-            <div class="diagram-step">Sender (Attacker)</div>
-            <div class="diagram-arrow">══[Avalanche of Pings]══></div>
-            <div class="diagram-step">Target Server</div>
-            <div class="diagram-arrow">══[100% CPU Locked]══></div>
-            <div class="diagram-step highlight">Service Disruption</div>
-          </div>
-
-          <div class="modal-observe-box">
-            <h4>👀 What You Will Observe:</h4>
-            <ul>
-              <li><strong>Packet Rate:</strong> PPS surges from ~0 to 35,000+ packets/sec.</li>
-              <li><strong>Target CPU:</strong> Processor spikes toward container core limit.</li>
-              <li><strong>Server Health:</strong> Switches from <span class="badge badge-success">HEALTHY</span> to <span class="badge badge-danger">CRITICAL (DoS)</span>.</li>
-            </ul>
-          </div>
-
-          <div class="simulation-duration-selector">
-            <label>Duration:</label>
-            <div class="radio-pill-group">
-              <label class="radio-pill"><input type="radio" name="flood-duration" value="10"> 10s</label>
-              <label class="radio-pill"><input type="radio" name="flood-duration" value="15" checked> 15s (Recommended)</label>
-              <label class="radio-pill"><input type="radio" name="flood-duration" value="30"> 30s</label>
-            </div>
-          </div>
-
-          <div class="safety-notice">
-            🔒 <strong>Safety Notice:</strong> Runs exclusively against the isolated local Docker test container. No traffic leaves your machine.
-          </div>
+        <!-- Lesson Navigation Stepper -->
+        <div class="lesson-stepper-bar">
+          <button type="button" class="lesson-step-tab active" data-target="flood-sec-hook">1. The Big Idea</button>
+          <button type="button" class="lesson-step-tab" data-target="flood-sec-terms">2. Key Terminology</button>
+          <button type="button" class="lesson-step-tab" data-target="flood-sec-flow">3. Attack Flow</button>
+          <button type="button" class="lesson-step-tab" data-target="flood-sec-telemetry">4. Live Telemetry</button>
+          <button type="button" class="lesson-step-tab" data-target="flood-sec-takeaways">5. Takeaways &amp; Launch</button>
         </div>
+
+        <div class="modal-body lesson-scroll-body">
+
+          <!-- 1. THE BIG IDEA (THE HOOK) -->
+          <section id="flood-sec-hook" class="lesson-section active">
+            <div class="hook-hero-banner">
+              <div class="hook-text-column">
+                <span class="lesson-badge-pill">🛎️ THE HOOK</span>
+                <h3 class="hook-headline">What Happens When a Server Gets Pinged Too Much?</h3>
+                <p class="hook-desc">
+                  Imagine answering thousands of doorbells at once. Eventually, even a powerful server struggles to respond to genuine users. That's the core idea behind an <strong>ICMP flood</strong>.
+                </p>
+                <div class="hook-actions">
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-flood-see-happens">
+                    See What Happens &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <!-- Animated Conceptual Illustration -->
+              <div class="hook-visual-stage" aria-label="Server receiving flood while legitimate users wait">
+                <div class="stage-actor actor-attacker">
+                  <span class="actor-glyph">👾</span>
+                  <span class="actor-label">Attacker Bot</span>
+                  <span class="actor-status spamming">SURGE 35k PPS</span>
+                </div>
+                <div class="stage-corridor">
+                  <div class="stage-packets-flow">
+                    <span class="st-pkt sp-1">PING</span>
+                    <span class="st-pkt sp-2">PING</span>
+                    <span class="st-pkt sp-3">PING</span>
+                    <span class="st-pkt sp-4">PING</span>
+                  </div>
+                  <div class="stage-lane-divider"></div>
+                  <div class="stage-user-packet">
+                    <span class="st-user-pkt">REQ (LOGIN)</span>
+                    <span class="st-drop-tag">⚠️ TIMEOUT</span>
+                  </div>
+                </div>
+                <div class="stage-actor actor-server">
+                  <span class="actor-glyph server-shaking">🖥️</span>
+                  <span class="actor-label">Target Server</span>
+                  <span class="actor-status cpu-locked">🔥 CPU 96%</span>
+                </div>
+                <div class="stage-actor actor-user">
+                  <span class="actor-glyph user-sad">⏳</span>
+                  <span class="actor-label">Legitimate User</span>
+                  <span class="actor-status waiting">504 TIMEOUT</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. KEY TERMINOLOGY (CLICKABLE INTERACTIVE CARDS) -->
+          <section id="flood-sec-terms" class="lesson-section">
+            <div class="section-title-strip">
+              <h4>📖 Core Terminology Breakdown</h4>
+              <span class="section-hint">Click any card to inspect its real-world analogy and role in the attack:</span>
+            </div>
+
+            <div class="interactive-terms-grid" id="interactive-terms-grid">
+              <!-- Term 1: ICMP -->
+              <div class="term-card" tabindex="0" data-term="icmp">
+                <div class="term-header">
+                  <span class="term-icon">📡</span>
+                  <h5>ICMP</h5>
+                  <span class="term-tag">PROTOCOL</span>
+                </div>
+                <p class="term-brief">Internet Control Message Protocol — used for network diagnostic error reporting.</p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> The postal return receipt stamped "Address Not Found" or "Delivered".
+                </div>
+              </div>
+
+              <!-- Term 2: Echo Request -->
+              <div class="term-card" tabindex="0" data-term="echo-req">
+                <div class="term-header">
+                  <span class="term-icon">🛎️</span>
+                  <h5>Echo Request</h5>
+                  <span class="term-tag">TYPE 8</span>
+                </div>
+                <p class="term-brief">A diagnostic ping asking: <em>"Are you online and reachable right now?"</em></p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> Knocking on someone's front door to check if anyone is home.
+                </div>
+              </div>
+
+              <!-- Term 3: Echo Reply -->
+              <div class="term-card" tabindex="0" data-term="echo-reply">
+                <div class="term-header">
+                  <span class="term-icon">💬</span>
+                  <h5>Echo Reply</h5>
+                  <span class="term-tag">TYPE 0</span>
+                </div>
+                <p class="term-brief">The server's response confirming: <em>"Yes, I am here and reachable."</em></p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> Opening the door and waving back: "Yes, I am here!"
+                </div>
+              </div>
+
+              <!-- Term 4: ICMP Flood -->
+              <div class="term-card" tabindex="0" data-term="flood">
+                <div class="term-header">
+                  <span class="term-icon">⚡</span>
+                  <h5>ICMP Flood</h5>
+                  <span class="term-tag">ATTACK</span>
+                </div>
+                <p class="term-brief">Excessive volume of pings consuming processing capacity and disrupting legitimate traffic.</p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> Hundreds of people buzzing the doorbell at the same second.
+                </div>
+              </div>
+
+              <!-- Term 5: PPS (Packets/Sec) -->
+              <div class="term-card" tabindex="0" data-term="pps">
+                <div class="term-header">
+                  <span class="term-icon">⏱️</span>
+                  <h5>PPS</h5>
+                  <span class="term-tag">METRIC</span>
+                </div>
+                <p class="term-brief">Packets Per Second — incoming packet rate triggering hardware and kernel interrupts.</p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> A speedometer measuring how many knocks strike the door each second.
+                </div>
+              </div>
+
+              <!-- Term 6: CPU Usage -->
+              <div class="term-card" tabindex="0" data-term="cpu">
+                <div class="term-header">
+                  <span class="term-icon">🧠</span>
+                  <h5>CPU Usage</h5>
+                  <span class="term-tag">RESOURCE</span>
+                </div>
+                <p class="term-brief">Processor computation power spent servicing network interrupt requests (SoftIRQs).</p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> Staff energy completely drained from answering nonstop doorbell rings.
+                </div>
+              </div>
+
+              <!-- Term 7: Denial of Service -->
+              <div class="term-card" tabindex="0" data-term="dos">
+                <div class="term-header">
+                  <span class="term-icon">🚫</span>
+                  <h5>Denial of Service</h5>
+                  <span class="term-tag">STATE</span>
+                </div>
+                <p class="term-brief">Condition where authentic, legitimate users are blocked from accessing the application.</p>
+                <div class="term-analogy-box">
+                  <strong>Everyday Analogy:</strong> Genuine students walk away because the admissions office door is blocked.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. ANIMATED ATTACK FLOW DIAGRAM -->
+          <section id="flood-sec-flow" class="lesson-section">
+            <div class="section-title-strip">
+              <h4>🔄 Interactive Attack Flow Diagram</h4>
+              <div class="flow-mode-switch">
+                <button type="button" class="btn-flow-toggle active" id="btn-flow-attack" onclick="setFlowAnimationMode('attack')">⚡ Flood Attack Traffic</button>
+                <button type="button" class="btn-flow-toggle" id="btn-flow-normal" onclick="setFlowAnimationMode('normal')">🌱 Normal Ping Traffic</button>
+              </div>
+            </div>
+
+            <div class="flow-diagram-container" id="flow-diagram-interactive">
+              <div class="flow-grid-steps">
+
+                <!-- Step 1: Sender -->
+                <div class="flow-card-step step-sender">
+                  <div class="step-num">1</div>
+                  <div class="step-glyph">👾</div>
+                  <h5>Sender (Attacker)</h5>
+                  <p id="flow-sender-desc">Generates high-frequency ICMP Echo Requests without waiting for replies.</p>
+                  <div class="flow-metric-badge" id="flow-sender-badge">Rate: 35,000+ PPS</div>
+                </div>
+
+                <!-- Channel 1: Packets -->
+                <div class="flow-arrow-channel channel-ping">
+                  <div class="flow-packet-stream" id="flow-stream-pings">
+                    <span class="fp-dot fpd-1">●</span>
+                    <span class="fp-dot fpd-2">●</span>
+                    <span class="fp-dot fpd-3">●</span>
+                  </div>
+                  <span class="flow-channel-label">ICMP Pings</span>
+                </div>
+
+                <!-- Step 2: Target Server -->
+                <div class="flow-card-step step-server" id="flow-server-card">
+                  <div class="step-num">2</div>
+                  <div class="step-glyph" id="flow-server-glyph">🖥️</div>
+                  <h5>Target Server</h5>
+                  <p id="flow-server-desc">Network card triggers SoftIRQs; OS CPU locked processing incoming echo buffers.</p>
+                  <div class="flow-cpu-meter">
+                    <span class="flow-cpu-fill" id="flow-cpu-fill" style="width: 95%;"></span>
+                    <span class="flow-cpu-text" id="flow-cpu-text">CPU: 95% Locked</span>
+                  </div>
+                </div>
+
+                <!-- Channel 2: Service Disruption -->
+                <div class="flow-arrow-channel channel-user">
+                  <div class="flow-packet-stream stream-user" id="flow-stream-users">
+                    <span class="fp-dot fpd-u1">✖</span>
+                    <span class="fp-dot fpd-u2">✖</span>
+                  </div>
+                  <span class="flow-channel-label">HTTP / App Traffic</span>
+                </div>
+
+                <!-- Step 3: Legitimate Users -->
+                <div class="flow-card-step step-users" id="flow-users-card">
+                  <div class="step-num">3</div>
+                  <div class="step-glyph" id="flow-user-glyph">⏳</div>
+                  <h5>Legitimate Users</h5>
+                  <p id="flow-user-desc">App requests queue up and time out. Server unable to service new TCP/HTTP sockets.</p>
+                  <div class="flow-status-pill status-dos" id="flow-user-badge">⛔ DoS: Connection Timed Out</div>
+                </div>
+
+              </div>
+
+              <div class="flow-diagram-caption" id="flow-diagram-caption">
+                <strong>Simulated Attack Mechanics:</strong> The attacker bombards the target with Echo Requests. Because the kernel allocates interrupt time for each packet header, high packet rates exhaust CPU capacity even before network bandwidth is saturated.
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. LIVE TELEMETRY OBSERVATION PANEL -->
+          <section id="flood-sec-telemetry" class="lesson-section">
+            <div class="section-title-strip">
+              <h4>📊 What You Will Observe (Live Telemetry Panel)</h4>
+              <span class="section-hint">Simulated container metrics showing immediate sensor changes:</span>
+            </div>
+
+            <div class="telemetry-compact-grid">
+              <!-- Metric 1: PPS -->
+              <div class="card tel-metric-card">
+                <div class="tel-metric-top">
+                  <span class="tel-icon">📈</span>
+                  <span class="tel-title">Packet Rate (PPS)</span>
+                </div>
+                <div class="tel-metric-value" id="modal-tel-pps">35,420 PPS</div>
+                <div class="tel-metric-sub">Packets per second</div>
+                <div class="tel-bar-wrap">
+                  <div class="tel-bar-fill fill-pps" style="width: 95%;"></div>
+                </div>
+                <div class="tel-metric-legend">
+                  Normal baseline: ~0-5 PPS. Surges into tens of thousands during attack.
+                </div>
+              </div>
+
+              <!-- Metric 2: CPU -->
+              <div class="card tel-metric-card">
+                <div class="tel-metric-top">
+                  <span class="tel-icon">🧠</span>
+                  <span class="tel-title">Target CPU Utilization</span>
+                </div>
+                <div class="tel-metric-value" id="modal-tel-cpu">94.8%</div>
+                <div class="tel-metric-sub">Container core load</div>
+                <div class="tel-bar-wrap">
+                  <div class="tel-bar-fill fill-cpu" style="width: 94%;"></div>
+                </div>
+                <div class="tel-metric-legend">
+                  Normal baseline: &lt;5%. Spikes toward core quota ceiling as SoftIRQs fire.
+                </div>
+              </div>
+
+              <!-- Metric 3: Server Health -->
+              <div class="card tel-metric-card">
+                <div class="tel-metric-top">
+                  <span class="tel-icon">🛡️</span>
+                  <span class="tel-title">Target Server Health</span>
+                </div>
+                <div class="tel-metric-value status-critical" id="modal-tel-health">CRITICAL (DoS)</div>
+                <div class="tel-metric-sub">Operating status</div>
+                <div class="tel-bar-wrap">
+                  <div class="tel-bar-fill fill-health" style="width: 100%;"></div>
+                </div>
+                <div class="tel-metric-legend">
+                  Transitions from HEALTHY &rarr; UNDER PRESSURE &rarr; CRITICAL (DoS).
+                </div>
+              </div>
+            </div>
+
+            <div class="telemetry-sandbox-badge">
+              ⚡ <strong>Simulated Sandbox Environment:</strong> Real container kernel instrumentation when lab is running; verified bounded simulation safeguards your host computer.
+            </div>
+          </section>
+
+          <!-- 5. TAKEAWAYS & DURATION SELECTOR -->
+          <section id="flood-sec-takeaways" class="lesson-section">
+            <div class="section-title-strip">
+              <h4>🎯 Key Takeaways &amp; Simulation Setup</h4>
+            </div>
+
+            <div class="takeaways-summary-box">
+              <div class="takeaway-item">
+                <span class="takeaway-bullet">1</span>
+                <div>
+                  <strong>Interrupt Starvation:</strong> The real culprit is not just bandwidth; processing millions of packets interrupts CPU tasks.
+                </div>
+              </div>
+              <div class="takeaway-item">
+                <span class="takeaway-bullet">2</span>
+                <div>
+                  <strong>Connectionless Simplicity:</strong> ICMP has no three-way handshake, allowing single machines or botnets to flood effortlessly.
+                </div>
+              </div>
+              <div class="takeaway-item">
+                <span class="takeaway-bullet">3</span>
+                <div>
+                  <strong>Defense in Depth:</strong> Mitigating flood attacks requires rate limiting, packet filtering, or upstream Anycast cloud scrubbing.
+                </div>
+              </div>
+            </div>
+
+            <!-- Simulation Duration -->
+            <div class="simulation-duration-selector">
+              <label style="font-weight: 800; font-family: var(--font-mono); font-size: 0.85rem;">Select Simulation Duration:</label>
+              <div class="radio-pill-group">
+                <label class="radio-pill"><input type="radio" name="flood-duration" value="10"> 10s</label>
+                <label class="radio-pill"><input type="radio" name="flood-duration" value="15" checked> 15s (Recommended)</label>
+                <label class="radio-pill"><input type="radio" name="flood-duration" value="30"> 30s</label>
+              </div>
+            </div>
+
+            <div class="safety-notice">
+              🔒 <strong>Isolated Sandbox Guarantee:</strong> Simulation runs bounded inside Docker containers on a private bridge network. Zero packets escape to the public internet or external systems.
+            </div>
+          </section>
+
+        </div><!-- /.modal-body -->
 
         <div class="modal-footer">
           <button class="btn btn-secondary" id="btn-cancel-flood-modal">Cancel</button>
@@ -619,75 +959,147 @@
     </div>
 
     <!-- =================================================================== -->
-    <!-- EDUCATIONAL MITIGATION DEFENSE MODAL -->
+    <!-- EDUCATIONAL MITIGATION DEFENSE LAB MODAL -->
     <!-- =================================================================== -->
     <div id="modal-apply-mitigation" class="modal-overlay" style="display: none;">
-      <div class="modal-card modal-lg">
+      <div class="modal-card modal-lg mitigation-defense-card">
         <div class="modal-header">
           <div class="modal-title-group">
             <span class="modal-icon">🛡️</span>
-            <h2>Protect the Target Server</h2>
+            <div>
+              <h2 style="margin: 0; line-height: 1;">Defend the Server: Choose Your Countermeasure</h2>
+              <span class="modal-sub-badge">INTERACTIVE DEFENSE LAB &amp; COUNTERMEASURE MATRIX</span>
+            </div>
           </div>
-          <button class="btn-modal-close" id="btn-close-mitigation-modal">&times;</button>
+          <button class="btn-modal-close" id="btn-close-mitigation-modal" title="Close Defense Lab">&times;</button>
         </div>
 
-        <div class="modal-body">
-          <p class="modal-intro-text">Select one defense technique to inspect its mechanics and apply it to the server:</p>
+        <div class="modal-body mitigation-scroll-body">
+
+          <!-- Challenge Intro & Defense Status -->
+          <div class="defense-challenge-banner">
+            <div class="challenge-text-col">
+              <span class="challenge-pill">⚔️ ACTIVE DEFENSE CHALLENGE</span>
+              <p class="challenge-intro-text">
+                Every defense has trade-offs. Explore the available techniques, understand what each one blocks, and discover how defenders keep legitimate users connected.
+              </p>
+            </div>
+            <div class="defense-status-badge-box">
+              <div class="current-defense-label">TARGET DEFENSE STATUS:</div>
+              <div class="current-defense-state" id="modal-defense-shield-state">
+                <span class="shield-dot dot-unprotected"></span>
+                <span id="modal-defense-shield-name">Exposed (No Filter)</span>
+              </div>
+              <div class="defense-explored-counter">
+                <span>Defenses Explored:</span>
+                <strong id="defense-explored-count">1 / 5</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Defense Selection Cards Grid (5 Methods) -->
+          <div class="section-title-strip" style="margin-top: 1rem;">
+            <h4>🛡️ Select a Defense Technique to Inspect &amp; Apply:</h4>
+          </div>
 
           <div class="mitigation-options-grid" id="mitigation-options-grid">
             <!-- 1. Rate Limiting -->
-            <div class="mitigation-card selected" data-method="rate-limiting">
+            <div class="mitigation-card selected" data-method="rate-limiting" tabindex="0">
               <div class="mit-card-header">
                 <span class="mit-badge live">DOCKER ACTIVE</span>
-                <h4>1. Rate Limiting</h4>
+                <span class="mit-icon-mini">⏱️</span>
               </div>
-              <p class="mit-def">Restricts requests accepted during an interval.</p>
-              <div class="mit-analogy"><strong>Analogy:</strong> A receptionist admitting 1 visitor every 2s.</div>
+              <h4 class="mit-card-title">1. Rate Limiting</h4>
+              <p class="mit-def">Restricts accepted requests within a rate interval.</p>
+              <div class="mit-analogy-compact"><strong>Analogy:</strong> Receptionist admitting 1 guest every 2 seconds.</div>
+              <div class="mit-effectiveness-meter">
+                <span class="eff-bar eff-high"></span>
+                <span class="eff-label">Effectiveness: High (Targeted)</span>
+              </div>
+              <button type="button" class="btn-explore-mit" onclick="event.stopPropagation(); selectAndExploreMitigation('rate-limiting')">
+                Explore Defense &rarr;
+              </button>
             </div>
 
             <!-- 2. Firewall Filtering -->
-            <div class="mitigation-card" data-method="firewall">
+            <div class="mitigation-card" data-method="firewall" tabindex="0">
               <div class="mit-card-header">
                 <span class="mit-badge live">DOCKER ACTIVE</span>
-                <h4>2. Firewall Filtering</h4>
+                <span class="mit-icon-mini">🧱</span>
               </div>
-              <p class="mit-def">Allows or blocks traffic by security rules.</p>
-              <div class="mit-analogy"><strong>Analogy:</strong> A security bouncer checking IDs.</div>
+              <h4 class="mit-card-title">2. Firewall Filtering</h4>
+              <p class="mit-def">Immediately drops matching packets at kernel boundary.</p>
+              <div class="mit-analogy-compact"><strong>Analogy:</strong> Front-gate bouncer turning away all uninvited visitors.</div>
+              <div class="mit-effectiveness-meter">
+                <span class="eff-bar eff-max"></span>
+                <span class="eff-label">Effectiveness: Complete Drop</span>
+              </div>
+              <button type="button" class="btn-explore-mit" onclick="event.stopPropagation(); selectAndExploreMitigation('firewall')">
+                Explore Defense &rarr;
+              </button>
             </div>
 
             <!-- 3. Traffic Monitoring -->
-            <div class="mitigation-card" data-method="monitoring">
+            <div class="mitigation-card" data-method="monitoring" tabindex="0">
               <div class="mit-card-header">
                 <span class="mit-badge simulated">SIMULATED</span>
-                <h4>3. Traffic Monitoring</h4>
+                <span class="mit-icon-mini">📈</span>
               </div>
-              <p class="mit-def">Observes packet baselines and triggers alerts.</p>
-              <div class="mit-analogy"><strong>Analogy:</strong> A shopkeeper pressing a silent alarm.</div>
+              <h4 class="mit-card-title">3. Traffic Monitoring</h4>
+              <p class="mit-def">Observes packet baselines and triggers automated alarms.</p>
+              <div class="mit-analogy-compact"><strong>Analogy:</strong> Store clerk pressing silent alarm before crowds surge in.</div>
+              <div class="mit-effectiveness-meter">
+                <span class="eff-bar eff-med"></span>
+                <span class="eff-label">Effectiveness: Early Warning</span>
+              </div>
+              <button type="button" class="btn-explore-mit" onclick="event.stopPropagation(); selectAndExploreMitigation('monitoring')">
+                Explore Defense &rarr;
+              </button>
             </div>
 
             <!-- 4. Cloud Scrubbing -->
-            <div class="mitigation-card" data-method="scrubbing">
+            <div class="mitigation-card" data-method="scrubbing" tabindex="0">
               <div class="mit-card-header">
                 <span class="mit-badge simulated">SIMULATED</span>
-                <h4>4. Cloud Scrubbing</h4>
+                <span class="mit-icon-mini">☁️</span>
               </div>
-              <p class="mit-def">Filters traffic at upstream edge centers.</p>
-              <div class="mit-analogy"><strong>Analogy:</strong> A bypass highway diverting freight trucks.</div>
+              <h4 class="mit-card-title">4. Cloud Scrubbing</h4>
+              <p class="mit-def">Filters volumetric traffic at upstream edge scrubbing centers.</p>
+              <div class="mit-analogy-compact"><strong>Analogy:</strong> Highway bypass diverting heavy freight away from town.</div>
+              <div class="mit-effectiveness-meter">
+                <span class="eff-bar eff-max"></span>
+                <span class="eff-label">Effectiveness: Volumetric Shield</span>
+              </div>
+              <button type="button" class="btn-explore-mit" onclick="event.stopPropagation(); selectAndExploreMitigation('scrubbing')">
+                Explore Defense &rarr;
+              </button>
             </div>
 
             <!-- 5. Capacity Management -->
-            <div class="mitigation-card" data-method="capacity">
+            <div class="mitigation-card" data-method="capacity" tabindex="0">
               <div class="mit-card-header">
                 <span class="mit-badge simulated">SIMULATED</span>
-                <h4>5. Capacity Management</h4>
+                <span class="mit-icon-mini">⚖️</span>
               </div>
-              <p class="mit-def">Distributes load across multiple replicas.</p>
-              <div class="mit-analogy"><strong>Analogy:</strong> Opening extra supermarket cash registers.</div>
+              <h4 class="mit-card-title">5. Capacity Management</h4>
+              <p class="mit-def">Distributes workload dynamically across multiple container replicas.</p>
+              <div class="mit-analogy-compact"><strong>Analogy:</strong> Supermarket opening 5 additional checkout registers.</div>
+              <div class="mit-effectiveness-meter">
+                <span class="eff-bar eff-med"></span>
+                <span class="eff-label">Effectiveness: Elastic Scale</span>
+              </div>
+              <button type="button" class="btn-explore-mit" onclick="event.stopPropagation(); selectAndExploreMitigation('capacity')">
+                Explore Defense &rarr;
+              </button>
             </div>
           </div>
 
-          <div class="card mitigation-detail-panel" id="mitigation-detail-panel"></div>
-        </div>
+          <!-- Explorable Defense Deep Dive Panel -->
+          <div class="card mitigation-detail-panel" id="mitigation-detail-panel">
+            <!-- Dynamically populated with deep dive, diagram, example, pro/con, and interactive quiz -->
+          </div>
+
+        </div><!-- /.modal-body -->
 
         <div class="modal-footer">
           <button class="btn btn-secondary" id="btn-cancel-mitigation-modal">Cancel</button>
