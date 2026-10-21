@@ -1,0 +1,45 @@
+# ============================================================
+# .dockerignore — Exclude unnecessary files from Docker build
+# ============================================================
+
+# Version control
+.git
+.gitignore
+
+# Electron-specific (not needed in Docker web deployment)
+electron/
+dist/
+out/
+
+# Development files
+*.md
+docs/
+tests/
+TESTING.md
+
+# Docker-related (avoid recursive copy)
+docker/
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+*.log
+
+# Node modules (rebuilt in Docker build)
+node_modules/
+
+# Experiments (lab containers are separate)
+experiments/
+
+# IDE / Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Assets not needed for web UI
+resources/
+assets/
